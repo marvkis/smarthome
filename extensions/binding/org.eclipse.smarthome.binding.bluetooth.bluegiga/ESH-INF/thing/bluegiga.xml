@@ -5,11 +5,7 @@
 
 	<bridge-type id="bluegiga">
 		<label>BlueGiga Bluetooth Interface</label>
-		<description>Serial interface to the BlueGiga BLE interface</description>
-
-		<channels>
-			<channel id="channel1" typeId="sample-channel" />
-		</channels>
+		<description>Serial interface to the BlueGiga dongle</description>
 
 		<config-description>
 			<parameter name="bluegiga_port" type="text" required="true">

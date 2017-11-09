@@ -15,24 +15,23 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
  * used across the whole binding.
  *
  * @author Chris Jackson - Initial contribution
+ * @author Kai Kreuzer - refactoring and extension
  */
 public class BluetoothBindingConstants {
 
-    public static final String BINDING_ID = "ble";
+    public static final String BINDING_ID = "bluetooth";
 
     // List of all Thing Type UIDs
-    public static final ThingTypeUID THING_TYPE_SAMPLE = new ThingTypeUID(BINDING_ID, "sample");
+    public static final ThingTypeUID THING_TYPE_GENERIC = new ThingTypeUID(BINDING_ID, "generic");
 
-    // List of all Channel ids
-    public static final String BLE_CHANNEL_RSSI = "rssi";
+    // List of all Channel Type IDs
+    public static final String CHANNEL_TYPE_RSSI = "rssi";
 
-    public static final String XMLPROPERTY_BLE_FILTER = "bleFilter";
+    public static final String PROPERTY_TXPOWER = "txpower";
+    public static final String PROPERTY_MAXCONNECTIONS = "maxconnections";
 
-    public static final String PROPERTY_TXPOWER = "ble_txpower";
-    public static final String PROPERTY_MAXCONNECTIONS = "ble_maxconnections";
+    public static final String CONFIGURATION_ADDRESS = "address";
 
-    public static final String CONFIGURATION_ADDRESS = "ble_address";
-
-    public static final long bleUuid = 0x800000805f9b34fbL;
+    public static final long BLUETOOTH_BASE_UUID = 0x800000805f9b34fbL;
 
 }

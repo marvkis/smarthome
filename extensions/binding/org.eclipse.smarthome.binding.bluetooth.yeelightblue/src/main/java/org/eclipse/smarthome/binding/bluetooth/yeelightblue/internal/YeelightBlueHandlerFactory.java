@@ -11,27 +11,30 @@ package org.eclipse.smarthome.binding.bluetooth.yeelightblue.internal;
 import java.util.Collections;
 import java.util.Set;
 
-import org.eclipse.smarthome.binding.bluetooth.yeelightblue.YeeLightBlueBindingConstants;
-import org.eclipse.smarthome.binding.bluetooth.yeelightblue.handler.YeeLightBlueHandler;
+import org.eclipse.smarthome.binding.bluetooth.yeelightblue.YeelightBlueBindingConstants;
+import org.eclipse.smarthome.binding.bluetooth.yeelightblue.handler.YeelightBlueHandler;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
+import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
 
 /**
- * The {@link Ble.YeeLightBlueHandlerFactory} is responsible for creating things and thing
+ * The {@link YeelightBlueHandlerFactory.YeeLightBlueHandlerFactory} is responsible for creating things and thing
  * handlers.
  *
  * @author Chris Jackson - Initial contribution
  */
-public class YeeLightBlueHandlerFactory extends BaseThingHandlerFactory {
+@Component(service = ThingHandlerFactory.class, immediate = true, configurationPid = "binding.yeelight", configurationPolicy = ConfigurationPolicy.OPTIONAL)
+public class YeelightBlueHandlerFactory extends BaseThingHandlerFactory {
 
     private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections
-            .singleton(YeeLightBlueBindingConstants.THING_TYPE_BLUE2);
+            .singleton(YeelightBlueBindingConstants.THING_TYPE_BLUE2);
 
     @Override
     public boolean supportsThingType(ThingTypeUID thingTypeUID) {
-        boolean x = SUPPORTED_THING_TYPES_UIDS.contains(thingTypeUID);
         return SUPPORTED_THING_TYPES_UIDS.contains(thingTypeUID);
     }
 
@@ -39,8 +42,8 @@ public class YeeLightBlueHandlerFactory extends BaseThingHandlerFactory {
     protected ThingHandler createHandler(Thing thing) {
         ThingTypeUID thingTypeUID = thing.getThingTypeUID();
 
-        if (thingTypeUID.equals(YeeLightBlueBindingConstants.THING_TYPE_BLUE2)) {
-            return new YeeLightBlueHandler(thing);
+        if (thingTypeUID.equals(YeelightBlueBindingConstants.THING_TYPE_BLUE2)) {
+            return new YeelightBlueHandler(thing);
         }
 
         return null;

@@ -4,8 +4,8 @@
 				 xmlns:binding="http://eclipse.org/smarthome/schemas/binding/v1.0.0"
 				 xsi:schemaLocation="http://eclipse.org/smarthome/schemas/binding/v1.0.0 http://eclipse.org/smarthome/schemas/binding-1.0.0.xsd">
 
-	<name>BLE Binding</name>
-	<description>This is the binding for Bluetooth Low Energy (BLE) - also known as Bluetooth Smart and Bluetooth 4.</description>
+	<name>Bluetooth Binding</name>
+	<description>This brings generic support for Bluetooth, it only supports generic devices.</description>
 	<author>Chris Jackson</author>
 
 </binding:binding>

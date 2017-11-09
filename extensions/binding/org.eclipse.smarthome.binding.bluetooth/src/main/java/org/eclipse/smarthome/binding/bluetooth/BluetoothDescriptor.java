@@ -95,7 +95,7 @@ public class BluetoothDescriptor {
         private UUID uuid;
 
         private GattDescriptor(long key) {
-            this.uuid = new UUID((key << 32) | 0x1000, BluetoothBindingConstants.bleUuid);
+            this.uuid = new UUID((key << 32) | 0x1000, BluetoothBindingConstants.BLUETOOTH_BASE_UUID);
         }
 
         private static void initMapping() {

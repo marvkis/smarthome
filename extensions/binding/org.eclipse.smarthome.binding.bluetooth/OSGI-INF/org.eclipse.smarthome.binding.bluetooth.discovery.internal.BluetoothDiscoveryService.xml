@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.2.0" configuration-pid="discovery.bluetooth" immediate="true" modified="modified" name="org.eclipse.smarthome.binding.bluetooth.discovery.internal.BluetoothDiscoveryService">
+   <service>
+      <provide interface="org.eclipse.smarthome.config.discovery.DiscoveryService"/>
+   </service>
+   <reference bind="addBluetoothAdapter" cardinality="0..n" interface="org.eclipse.smarthome.binding.bluetooth.BluetoothAdapter" name="BluetoothAdapter" policy="dynamic" unbind="removeBluetoothAdapter"/>
+   <reference bind="addBluetoothDiscoveryParticipant" cardinality="0..n" interface="org.eclipse.smarthome.binding.bluetooth.discovery.BluetoothDiscoveryParticipant" name="BluetoothDiscoveryParticipant" policy="dynamic" unbind="removeBluetoothDiscoveryParticipant"/>
+   <implementation class="org.eclipse.smarthome.binding.bluetooth.discovery.internal.BluetoothDiscoveryService"/>
+</scr:component>

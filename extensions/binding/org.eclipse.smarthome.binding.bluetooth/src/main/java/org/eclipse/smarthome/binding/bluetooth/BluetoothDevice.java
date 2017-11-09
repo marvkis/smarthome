@@ -26,10 +26,11 @@ import org.slf4j.LoggerFactory;
  * @author Chris Jackson - Initial contribution
  */
 public class BluetoothDevice {
+
     private final Logger logger = LoggerFactory.getLogger(BluetoothDevice.class);
 
     /**
-     * Enumeration of BLE connection states
+     * Enumeration of Bluetooth connection states
      *
      */
     public enum ConnectionState {
@@ -59,7 +60,7 @@ public class BluetoothDevice {
         DISCONNECTING
     }
 
-    protected enum BleEventType {
+    protected enum BluetoothEventType {
         CONNECTION_STATE,
         SCAN_RECORD,
         CHARACTERISTIC_READ_COMPLETE,
@@ -72,6 +73,11 @@ public class BluetoothDevice {
      * Current connection state
      */
     protected ConnectionState connectionState = ConnectionState.DISCOVERING;
+
+    /**
+     * The adapter the device is accessed through
+     */
+    protected BluetoothAdapter adapter;
 
     /**
      * Devices Bluetooth address
@@ -140,6 +146,15 @@ public class BluetoothDevice {
      */
     public BluetoothAddress getAddress() {
         return address;
+    }
+
+    /**
+     * Returns the adapter through which the device is accessed
+     *
+     * @return The adapter through which the device is accessed
+     */
+    public BluetoothAdapter getAdapter() {
+        return adapter;
     }
 
     /**
@@ -269,7 +284,8 @@ public class BluetoothDevice {
     }
 
     /**
-     * Disconnects from a device. Once the connection state is updated, the {@link BluetoothDeviceListener.onConnectionState}
+     * Disconnects from a device. Once the connection state is updated, the
+     * {@link BluetoothDeviceListener.onConnectionState}
      * method will be called with the connection state.
      * <p>
      * If the device is not currently connected, this will return false.
@@ -315,7 +331,8 @@ public class BluetoothDevice {
      * Reads a characteristic. Only a single read or write operation can be requested at once. Attempting to perform an
      * operation when one is already in progress will result in subsequent calls returning false.
      * <p>
-     * This is an asynchronous method. Once the read is complete {@link BluetoothDeviceListener.onCharacteristicReadComplete}
+     * This is an asynchronous method. Once the read is complete
+     * {@link BluetoothDeviceListener.onCharacteristicReadComplete}
      * method will be called with the completion state.
      * <p>
      * Note that {@link BluetoothDeviceListener.onCharacteristicUpdate} will be called when the read value is received.
@@ -432,10 +449,10 @@ public class BluetoothDevice {
     /**
      * Notify the listeners of an event
      *
-     * @param event the {@link BleEventType} of this event
+     * @param event the {@link BluetoothEventType} of this event
      * @param args an array of arguments to pass to the callback
      */
-    protected void notifyListeners(BleEventType event, Object... args) {
+    protected void notifyListeners(BluetoothEventType event, Object... args) {
         for (BluetoothDeviceListener listener : eventListeners) {
             try {
                 switch (event) {

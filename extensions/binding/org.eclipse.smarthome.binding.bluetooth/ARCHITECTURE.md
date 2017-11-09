@@ -1,8 +1,8 @@
-# BLE Binding overview
+# Bluetooth Binding overview
  
-The BLE binding is implemented to allow bundle fragments to extend the main BLE bundle to add new thing handlers, and new bridges. This architecture means that fragment bundles must follow specific naming to avoid conflicts when the fragments are merged, and must always utilise the binging name ```ble```.
+The Bluetooth binding is implemented to allow bundles to extend the main Bluetooth bundle to add new thing handlers as well as new bridges.
 
-A base class structure is defined in the org.eclipse.smarthome.binding.bluetooth bundle. This includes the main classes required to implement BLE -:
+A base class structure is defined in the org.eclipse.smarthome.binding.bluetooth bundle. This includes the main classes required to implement Bluetooth support:
  
 * BleBaseBridgeHandler. This implements the main functionality required by a BLE bridge including management of devices that a bridge discovers.
 * BleDevice. This implements a BLE device. It manages the notifications of device notifications, BLE service and characteristic management, and provides the main interface to communicate to a BLE device.

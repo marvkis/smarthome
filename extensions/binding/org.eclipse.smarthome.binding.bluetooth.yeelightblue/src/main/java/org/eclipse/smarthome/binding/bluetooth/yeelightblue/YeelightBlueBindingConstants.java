@@ -11,12 +11,12 @@ package org.eclipse.smarthome.binding.bluetooth.yeelightblue;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 
 /**
- * The {@link Ble.YeeLightBlueBindingConstants} class defines common constants, which are
+ * The {@link YeelightBlueBindingConstants.YeeLightBlueBindingConstants} class defines common constants, which are
  * used across the whole binding.
  *
  * @author Chris Jackson - Initial contribution
  */
-public class YeeLightBlueBindingConstants {
+public class YeelightBlueBindingConstants {
 
     private static final String BINDING_ID = "ble";
 

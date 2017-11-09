@@ -12,27 +12,31 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.jdt.annotation.DefaultLocation;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.smarthome.binding.bluetooth.BluetoothAdapter;
+import org.eclipse.smarthome.binding.bluetooth.BluetoothAddress;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothBindingConstants;
-import org.eclipse.smarthome.binding.bluetooth.BluetoothBridge;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothDevice;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothDeviceListener;
-import org.eclipse.smarthome.binding.bluetooth.BluetoothAddress;
+import org.eclipse.smarthome.binding.bluetooth.BluetoothDiscoveryListener;
 import org.eclipse.smarthome.binding.bluetooth.bluegiga.BlueGigaBindingConstants;
-import org.eclipse.smarthome.binding.bluetooth.discovery.BluetoothDiscoveryService;
-import org.eclipse.smarthome.config.discovery.DiscoveryService;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
+import org.eclipse.smarthome.core.thing.ThingUID;
 import org.eclipse.smarthome.core.thing.binding.BaseBridgeHandler;
 import org.eclipse.smarthome.core.types.Command;
-import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,12 +98,14 @@ import gnu.io.UnsupportedCommOperationException;
  *
  * @author Chris Jackson - Initial contribution
  */
-public class BlueGigaBridgeHandler extends BaseBridgeHandler implements BluetoothBridge, BlueGigaEventListener {
+@NonNullByDefault({ DefaultLocation.PARAMETER, DefaultLocation.RETURN_TYPE, DefaultLocation.ARRAY_CONTENTS,
+        DefaultLocation.TYPE_ARGUMENT, DefaultLocation.TYPE_BOUND, DefaultLocation.TYPE_PARAMETER })
+public class BlueGigaBridgeHandler extends BaseBridgeHandler implements BluetoothAdapter, BlueGigaEventListener {
 
     private final Logger logger = LoggerFactory.getLogger(BlueGigaBridgeHandler.class);
 
     // The Serial port name
-    private String portId;
+    private final String portId;
 
     // The serial port.
     private SerialPort serialPort;
@@ -116,33 +122,39 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
     // The maximum number of connections this interface supports
     private int maxConnections = 0;
 
-    private int passiveScanInterval = 0x40;
-    private int passiveScanWindow = 0x08;
+    private final int passiveScanInterval = 0x40;
+    private final int passiveScanWindow = 0x08;
 
-    private int activeScanInterval = 0x40;
-    private int activeScanWindow = 0x20;
+    private final int activeScanInterval = 0x40;
+    private final int activeScanWindow = 0x20;
 
     // Our BT address
     private BluetoothAddress address;
 
     // Map of Bluetooth devices known to this bridge.
     // This is all devices we have heard on the network - not just things bound to the bridge
-    private final Map<BluetoothAddress, BluetoothDevice> devices = new HashMap<BluetoothAddress, BluetoothDevice>();
+    private final Map<BluetoothAddress, @Nullable BluetoothDevice> devices = new HashMap<>();
 
     // Map of open connections
     private final Map<Integer, BluetoothAddress> connections = new HashMap<Integer, BluetoothAddress>();
 
+    // Set of discovery listeners
+    protected final Set<BluetoothDiscoveryListener> discoveryListeners = new CopyOnWriteArraySet<>();
+
     // List of device listeners
     protected final ConcurrentHashMap<BluetoothAddress, BluetoothDeviceListener> deviceListeners = new ConcurrentHashMap<BluetoothAddress, BluetoothDeviceListener>();
-
-    private BluetoothDiscoveryService discoveryService;
-    private ServiceRegistration discoveryRegistration;
 
     public BlueGigaBridgeHandler(Bridge bridge) {
         super(bridge);
 
         // Read the configuration
         portId = (String) getConfig().get(BlueGigaBindingConstants.CONFIGURATION_PORT);
+    }
+
+    @Override
+    public ThingUID getUID() {
+        // being a BluetoothAdapter, we use the UID of our bridge
+        return getThing().getUID();
     }
 
     @Override
@@ -192,6 +204,10 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
 
                 // Create the handler
                 bgHandler = new BlueGigaSerialHandler(inputStream, outputStream);
+
+                // xxxx
+
+                bgHandler.addEventListener(me);
                 bgHandler.addEventListener(me);
 
                 // Stop any procedures that are running
@@ -228,14 +244,6 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
                 // Not doing this will cause connection failures later
                 bgSetMode();
 
-                // Start the discovery service
-                discoveryService = new BluetoothDiscoveryService(me.getThing().getUID(), me);
-                discoveryService.activate();
-
-                // And register it as an OSGi service
-                discoveryRegistration = bundleContext.registerService(DiscoveryService.class.getName(),
-                        discoveryService, new Hashtable<String, Object>());
-
                 // Start passive scan
                 bgStartScanning(false, passiveScanInterval, passiveScanWindow);
 
@@ -259,10 +267,6 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
 
     @Override
     public void dispose() {
-        // Remove the discovery service
-        discoveryService.deactivate();
-        discoveryRegistration.unregister();
-
         closeSerialPort();
     }
 
@@ -331,7 +335,7 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
     }
 
     @Override
-    public void bluegigaEventReceived(BlueGigaResponse event) {
+    public void bluegigaEventReceived(@Nullable BlueGigaResponse event) {
         if (event instanceof BlueGigaScanResponseEvent) {
             BlueGigaScanResponseEvent scanEvent = (BlueGigaScanResponseEvent) event;
 
@@ -383,7 +387,11 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
 
     @Override
     public BluetoothAddress getAddress() {
-        return address;
+        if (address != null) {
+            return address;
+        } else {
+            throw new IllegalStateException("Adapter has not been initialized yet!");
+        }
     }
 
     @Override
@@ -466,10 +474,9 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
      * Device discovered. This simply passes the discover information to the discovery service for processing.
      */
     public void deviceDiscovered(BlueGigaBluetoothDevice device) {
-        if (discoveryService == null) {
-            return;
+        for (BluetoothDiscoveryListener listener : discoveryListeners) {
+            listener.deviceDiscovered(device);
         }
-        discoveryService.deviceDiscovered(device);
     }
 
     /**
@@ -595,6 +602,16 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
      */
     public void removeEventListener(BlueGigaEventListener listener) {
         bgHandler.removeEventListener(listener);
+    }
+
+    @Override
+    public void addDiscoveryListener(@NonNull BluetoothDiscoveryListener listener) {
+        discoveryListeners.add(listener);
+    }
+
+    @Override
+    public void removeDiscoveryListener(@Nullable BluetoothDiscoveryListener listener) {
+        discoveryListeners.remove(listener);
     }
 
 }

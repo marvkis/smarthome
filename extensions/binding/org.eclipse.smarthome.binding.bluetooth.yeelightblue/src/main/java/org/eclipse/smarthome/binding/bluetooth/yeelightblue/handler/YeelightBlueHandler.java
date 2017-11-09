@@ -10,16 +10,16 @@ package org.eclipse.smarthome.binding.bluetooth.yeelightblue.handler;
 
 import java.util.UUID;
 
+import org.eclipse.smarthome.binding.bluetooth.BluetoothAdapter;
+import org.eclipse.smarthome.binding.bluetooth.BluetoothAddress;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothBindingConstants;
-import org.eclipse.smarthome.binding.bluetooth.BluetoothBridge;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothCharacteristic;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothCompletionStatus;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothDevice;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothDeviceListener;
-import org.eclipse.smarthome.binding.bluetooth.BluetoothAddress;
 import org.eclipse.smarthome.binding.bluetooth.notification.BluetoothConnectionStatusNotification;
 import org.eclipse.smarthome.binding.bluetooth.notification.BluetoothScanNotification;
-import org.eclipse.smarthome.binding.bluetooth.yeelightblue.YeeLightBlueBindingConstants;
+import org.eclipse.smarthome.binding.bluetooth.yeelightblue.YeelightBlueBindingConstants;
 import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.HSBType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
@@ -36,21 +36,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The {@link YeeLightBlueHandler} is responsible for handling commands, which are
+ * The {@link YeelightBlueHandler} is responsible for handling commands, which are
  * sent to one of the channels.
  *
  * @author Chris Jackson - Initial contribution
  */
-public class YeeLightBlueHandler extends BaseThingHandler implements BluetoothDeviceListener {
+public class YeelightBlueHandler extends BaseThingHandler implements BluetoothDeviceListener {
 
-    private final Logger logger = LoggerFactory.getLogger(YeeLightBlueHandler.class);
+    private final Logger logger = LoggerFactory.getLogger(YeelightBlueHandler.class);
 
     private final UUID UUID_YEELIGHT_CONTROL = UUID.fromString("0000fff1-0000-0000-0000-000000000000");
     private final UUID UUID_YEELIGHT_STATUS_REQUEST = UUID.fromString("0000fff5-0000-0000-0000-000000000000");
     private final UUID UUID_YEELIGHT_STATUS_RESPONSE = UUID.fromString("0000fff6-0000-0000-0000-000000000000");
 
     // Remember the bridge - it's our link to the world
-    private BluetoothBridge bleBridge = null;
+    private BluetoothAdapter bleBridge = null;
 
     // Our BLE address
     private BluetoothAddress address;
@@ -62,7 +62,7 @@ public class YeeLightBlueHandler extends BaseThingHandler implements BluetoothDe
     private BluetoothCharacteristic characteristicControl = null;
     private BluetoothCharacteristic characteristicRequest = null;
 
-    public YeeLightBlueHandler(Thing thing) {
+    public YeelightBlueHandler(Thing thing) {
         super(thing);
     }
 
@@ -97,7 +97,7 @@ public class YeeLightBlueHandler extends BaseThingHandler implements BluetoothDe
         }
 
         // Remember the bridge - it's our link to the BLE world
-        bleBridge = (BluetoothBridge) getBridge().getHandler();
+        bleBridge = (BluetoothAdapter) getBridge().getHandler();
 
         device = bleBridge.getDevice(address);
         if (device == null) {
@@ -161,7 +161,7 @@ public class YeeLightBlueHandler extends BaseThingHandler implements BluetoothDe
 
     @Override
     public void onScanRecordReceived(BluetoothScanNotification scanNotification) {
-        updateState(new ChannelUID(getThing().getUID(), BluetoothBindingConstants.BLE_CHANNEL_RSSI),
+        updateState(new ChannelUID(getThing().getUID(), BluetoothBindingConstants.CHANNEL_TYPE_RSSI),
                 new DecimalType(scanNotification.getRssi()));
     }
 
@@ -205,7 +205,8 @@ public class YeeLightBlueHandler extends BaseThingHandler implements BluetoothDe
     }
 
     @Override
-    public void onCharacteristicWriteComplete(BluetoothCharacteristic characteristic, BluetoothCompletionStatus status) {
+    public void onCharacteristicWriteComplete(BluetoothCharacteristic characteristic,
+            BluetoothCompletionStatus status) {
         // If this was a write to the control, then read back the state
         if (characteristic.getUuid().equals(UUID_YEELIGHT_CONTROL) == true) {
             readStatus();
@@ -256,10 +257,10 @@ public class YeeLightBlueHandler extends BaseThingHandler implements BluetoothDe
 
             HSBType hsbState = HSBType.fromRGB(red, green, blue);
 
-            updateState(new ChannelUID(getThing().getUID(), YeeLightBlueBindingConstants.CHANNEL_COLOR), hsbState);
-            updateState(new ChannelUID(getThing().getUID(), YeeLightBlueBindingConstants.CHANNEL_SWITCH),
+            updateState(new ChannelUID(getThing().getUID(), YeelightBlueBindingConstants.CHANNEL_COLOR), hsbState);
+            updateState(new ChannelUID(getThing().getUID(), YeelightBlueBindingConstants.CHANNEL_SWITCH),
                     light == 0 ? OnOffType.OFF : OnOffType.ON);
-            updateState(new ChannelUID(getThing().getUID(), YeeLightBlueBindingConstants.CHANNEL_BRIGHTNESS),
+            updateState(new ChannelUID(getThing().getUID(), YeelightBlueBindingConstants.CHANNEL_BRIGHTNESS),
                     new PercentType(light));
         }
     }

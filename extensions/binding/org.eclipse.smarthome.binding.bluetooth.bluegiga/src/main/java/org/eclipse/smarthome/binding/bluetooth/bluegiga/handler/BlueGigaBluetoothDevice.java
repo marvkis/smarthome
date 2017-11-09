@@ -239,7 +239,7 @@ public class BlueGigaBluetoothDevice extends BluetoothDevice implements BlueGiga
                     connection = -1;
 
                     // But notify listeners that the state is now DISCOVERED
-                    notifyListeners(BleEventType.CONNECTION_STATE,
+                    notifyListeners(BluetoothEventType.CONNECTION_STATE,
                             new BluetoothConnectionStatusNotification(ConnectionState.DISCOVERED));
 
                     // Notify the bridge - for inbox notifications
@@ -268,7 +268,7 @@ public class BlueGigaBluetoothDevice extends BluetoothDevice implements BlueGiga
                 scanNotification.setManufacturerData(manufacturerData);
             }
 
-            notifyListeners(BleEventType.SCAN_RECORD, scanNotification);
+            notifyListeners(BluetoothEventType.SCAN_RECORD, scanNotification);
 
             return;
         }
@@ -339,11 +339,11 @@ public class BlueGigaBluetoothDevice extends BluetoothDevice implements BlueGiga
                 case GET_CHARACTERISTICS:
                     // We've downloaded all characteristics
                     procedureProgress = BlueGigaProcedure.NONE;
-                    notifyListeners(BleEventType.SERVICES_DISCOVERED);
+                    notifyListeners(BluetoothEventType.SERVICES_DISCOVERED);
                     break;
                 case CHARACTERISTIC_READ:
                     // The read failed
-                    notifyListeners(BleEventType.CHARACTERISTIC_READ_COMPLETE, procedureCharacteristic,
+                    notifyListeners(BluetoothEventType.CHARACTERISTIC_READ_COMPLETE, procedureCharacteristic,
                             BluetoothCompletionStatus.ERROR);
                     procedureProgress = BlueGigaProcedure.NONE;
                     procedureCharacteristic = null;
@@ -352,7 +352,7 @@ public class BlueGigaBluetoothDevice extends BluetoothDevice implements BlueGiga
                     // The write completed - failure or success
                     BluetoothCompletionStatus result = completedEvent.getResult() == BgApiResponse.SUCCESS
                             ? BluetoothCompletionStatus.SUCCESS : BluetoothCompletionStatus.ERROR;
-                    notifyListeners(BleEventType.CHARACTERISTIC_WRITE_COMPLETE, procedureCharacteristic, result);
+                    notifyListeners(BluetoothEventType.CHARACTERISTIC_WRITE_COMPLETE, procedureCharacteristic, result);
                     procedureProgress = BlueGigaProcedure.NONE;
                     procedureCharacteristic = null;
                     break;
@@ -378,7 +378,7 @@ public class BlueGigaBluetoothDevice extends BluetoothDevice implements BlueGiga
             }
 
             if (connectionEvent.getFlags().contains(ConnectionStatusFlag.CONNECTION_CONNECTED)) {
-                notifyListeners(BleEventType.CONNECTION_STATE, new BluetoothConnectionStatusNotification(connectionState));
+                notifyListeners(BluetoothEventType.CONNECTION_STATE, new BluetoothConnectionStatusNotification(connectionState));
             }
 
             return;
@@ -394,7 +394,7 @@ public class BlueGigaBluetoothDevice extends BluetoothDevice implements BlueGiga
 
             connectionState = ConnectionState.DISCONNECTED;
             connection = -1;
-            notifyListeners(BleEventType.CONNECTION_STATE, new BluetoothConnectionStatusNotification(connectionState));
+            notifyListeners(BluetoothEventType.CONNECTION_STATE, new BluetoothConnectionStatusNotification(connectionState));
 
             return;
         }
@@ -413,13 +413,13 @@ public class BlueGigaBluetoothDevice extends BluetoothDevice implements BlueGiga
                     && procedureCharacteristic.getHandle() == valueEvent.getAttHandle()) {
                 procedureProgress = BlueGigaProcedure.NONE;
                 procedureCharacteristic = null;
-                notifyListeners(BleEventType.CHARACTERISTIC_READ_COMPLETE, procedureCharacteristic,
+                notifyListeners(BluetoothEventType.CHARACTERISTIC_READ_COMPLETE, procedureCharacteristic,
                         BluetoothCompletionStatus.SUCCESS);
             }
 
             // Notify the user of the updated value
             if (characteristic != null) {
-                notifyListeners(BleEventType.CHARACTERISTIC_UPDATED, procedureCharacteristic);
+                notifyListeners(BluetoothEventType.CHARACTERISTIC_UPDATED, procedureCharacteristic);
             }
         }
     }

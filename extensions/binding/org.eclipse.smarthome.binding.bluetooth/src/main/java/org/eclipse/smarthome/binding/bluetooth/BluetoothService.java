@@ -220,7 +220,7 @@ public class BluetoothService {
         private UUID uuid;
 
         private GattService(long key) {
-            this.uuid = new UUID((key << 32) | 0x1000, BluetoothBindingConstants.bleUuid);
+            this.uuid = new UUID((key << 32) | 0x1000, BluetoothBindingConstants.BLUETOOTH_BASE_UUID);
         }
 
         private static void initMapping() {
