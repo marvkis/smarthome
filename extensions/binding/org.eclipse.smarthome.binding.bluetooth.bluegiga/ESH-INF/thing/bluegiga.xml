@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<thing:thing-descriptions bindingId="ble" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<thing:thing-descriptions bindingId="bluetooth" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:thing="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0"
 	xsi:schemaLocation="http://eclipse.org/smarthome/schemas/thing-description/v1.0.0 http://eclipse.org/smarthome/schemas/thing-description-1.0.0.xsd">
 
 	<bridge-type id="bluegiga">
-		<label>BlueGiga Bluetooth Interface</label>
+		<label>BlueGiga Bluetooth Dongle</label>
 		<description>Serial interface to the BlueGiga dongle</description>
 
 		<config-description>
-			<parameter name="bluegiga_port" type="text" required="true">
+			<parameter name="port" type="text" required="true">
 				<label>Port</label>
 				<description>Serial Port</description>
 			</parameter>

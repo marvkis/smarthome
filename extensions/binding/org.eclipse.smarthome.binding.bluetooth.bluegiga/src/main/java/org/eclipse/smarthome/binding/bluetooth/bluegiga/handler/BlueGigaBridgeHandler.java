@@ -17,7 +17,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArraySet;
-import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jdt.annotation.DefaultLocation;
 import org.eclipse.jdt.annotation.NonNull;
@@ -32,6 +31,7 @@ import org.eclipse.smarthome.binding.bluetooth.BluetoothDiscoveryListener;
 import org.eclipse.smarthome.binding.bluetooth.bluegiga.BlueGigaBindingConstants;
 import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
+import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingStatus;
 import org.eclipse.smarthome.core.thing.ThingStatusDetail;
 import org.eclipse.smarthome.core.thing.ThingUID;
@@ -104,9 +104,6 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
 
     private final Logger logger = LoggerFactory.getLogger(BlueGigaBridgeHandler.class);
 
-    // The Serial port name
-    private final String portId;
-
     // The serial port.
     private SerialPort serialPort;
 
@@ -146,9 +143,6 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
 
     public BlueGigaBridgeHandler(Bridge bridge) {
         super(bridge);
-
-        // Read the configuration
-        portId = (String) getConfig().get(BlueGigaBindingConstants.CONFIGURATION_PORT);
     }
 
     @Override
@@ -165,104 +159,98 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
     @Override
     public void initialize() {
         final BlueGigaBridgeHandler me = this;
+        final String portId = (String) getConfig().get(BlueGigaBindingConstants.CONFIGURATION_PORT);
 
-        // Initialisation takes some time, so do it in another thread.
-        Runnable pollingRunnable = new Runnable() {
-            @Override
-            public void run() {
-                openSerialPort(portId, 115200);
-                if (serialPort == null) {
-                    // Create the handler
-                    bgHandler = new BlueGigaSerialHandler(inputStream, outputStream);
-                }
+        if (portId == null) {
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Serial port must be configured!");
+            return;
+        }
+        updateStatus(ThingStatus.UNKNOWN);
 
-                // BlueGigaCommand command1 = new BlueGigaAddressGetCommand();
-                // BlueGigaAddressGetResponse addressResponse1 = (BlueGigaAddressGetResponse) bgHandler
-                // .sendTransaction(command1);
-                // if (addressResponse1 != null) {
-                // btAddress = addressResponse1.getAddress();
-                // }
+        scheduler.submit(() -> {
+            openSerialPort(portId, 115200);
 
-                // Create and send the reset command to the dongle
-                BlueGigaCommand command; // = new BlueGigaResetCommand();
-                // bgHandler.queueFrame(command);
+            // BlueGigaCommand command1 = new BlueGigaAddressGetCommand();
+            // BlueGigaAddressGetResponse addressResponse1 = (BlueGigaAddressGetResponse) bgHandler
+            // .sendTransaction(command1);
+            // if (addressResponse1 != null) {
+            // btAddress = addressResponse1.getAddress();
+            // }
 
-                // The reset command has no response. It will however reset the serial interface!
-                // We wait a short while, then close and re-open the serial port.
-                // try {
-                // Thread.sleep(250);
-                // closeSerialPort();
-                // Thread.sleep(250);
-                // } catch (InterruptedException e) {
-                // If we're interrupted, then close.
-                // Should only happen if the binding gets closed
-                // return;
-                // }
+            // Create and send the reset command to the dongle
+            BlueGigaCommand command; // = new BlueGigaResetCommand();
+            // bgHandler.queueFrame(command);
 
-                // Open the port for the final time
-                // openSerialPort(portId, 115200);
+            // The reset command has no response. It will however reset the serial interface!
+            // We wait a short while, then close and re-open the serial port.
+            // try {
+            // Thread.sleep(250);
+            // closeSerialPort();
+            // Thread.sleep(250);
+            // } catch (InterruptedException e) {
+            // If we're interrupted, then close.
+            // Should only happen if the binding gets closed
+            // return;
+            // }
 
-                // Create the handler
-                bgHandler = new BlueGigaSerialHandler(inputStream, outputStream);
+            // Open the port for the final time
+            // openSerialPort(portId, 115200);
 
-                // xxxx
+            // Create the handler
+            bgHandler = new BlueGigaSerialHandler(inputStream, outputStream);
 
-                bgHandler.addEventListener(me);
-                bgHandler.addEventListener(me);
+            // xxxx
 
-                // Stop any procedures that are running
-                bgStopProcedure();
+            bgHandler.addEventListener(me);
+            bgHandler.addEventListener(me);
 
-                // Close all transactions
-                command = new BlueGigaGetConnectionsCommand();
-                BlueGigaGetConnectionsResponse connectionsResponse = (BlueGigaGetConnectionsResponse) bgHandler
-                        .sendTransaction(command);
-                if (connectionsResponse != null) {
-                    maxConnections = connectionsResponse.getMaxconn();
-                }
+            // Stop any procedures that are running
+            bgStopProcedure();
 
-                // Close all connections so we start from a known position
-                for (int connection = 0; connection < maxConnections; connection++) {
-                    bgDisconnect(connection);
-                }
-
-                // Get our Bluetooth address
-                command = new BlueGigaAddressGetCommand();
-                BlueGigaAddressGetResponse addressResponse = (BlueGigaAddressGetResponse) bgHandler
-                        .sendTransaction(command);
-                if (addressResponse != null) {
-                    address = new BluetoothAddress(addressResponse.getAddress());
-                    updateStatus(ThingStatus.ONLINE);
-                } else {
-                    updateStatus(ThingStatus.OFFLINE);
-                }
-
-                command = new BlueGigaGetInfoCommand();
-                BlueGigaGetInfoResponse infoResponse = (BlueGigaGetInfoResponse) bgHandler.sendTransaction(command);
-
-                // Set mode to non-discoverable etc.
-                // Not doing this will cause connection failures later
-                bgSetMode();
-
-                // Start passive scan
-                bgStartScanning(false, passiveScanInterval, passiveScanWindow);
-
-                Map<String, String> properties = editProperties();
-                properties.put(BluetoothBindingConstants.PROPERTY_MAXCONNECTIONS, Integer.toString(maxConnections));
-                properties.put(BlueGigaBindingConstants.PROPERTY_FIRMWARE,
-                        String.format("%d.%d", infoResponse.getMajor(), infoResponse.getMinor()));
-                properties.put(BlueGigaBindingConstants.PROPERTY_HARDWARE,
-                        Integer.toString(infoResponse.getHardware()));
-                properties.put(BlueGigaBindingConstants.PROPERTY_PROTOCOL,
-                        Integer.toString(infoResponse.getProtocolVersion()));
-                properties.put(BlueGigaBindingConstants.PROPERTY_LINKLAYER,
-                        Integer.toString(infoResponse.getLlVersion()));
-                updateProperties(properties);
+            // Close all transactions
+            command = new BlueGigaGetConnectionsCommand();
+            BlueGigaGetConnectionsResponse connectionsResponse = (BlueGigaGetConnectionsResponse) bgHandler
+                    .sendTransaction(command);
+            if (connectionsResponse != null) {
+                maxConnections = connectionsResponse.getMaxconn();
             }
-        };
 
-        // Schedule the initialisation task
-        scheduler.schedule(pollingRunnable, 10, TimeUnit.MILLISECONDS);
+            // Close all connections so we start from a known position
+            for (int connection = 0; connection < maxConnections; connection++) {
+                bgDisconnect(connection);
+            }
+
+            // Get our Bluetooth address
+            command = new BlueGigaAddressGetCommand();
+            BlueGigaAddressGetResponse addressResponse = (BlueGigaAddressGetResponse) bgHandler
+                    .sendTransaction(command);
+            if (addressResponse != null) {
+                address = new BluetoothAddress(addressResponse.getAddress());
+                updateStatus(ThingStatus.ONLINE);
+            } else {
+                updateStatus(ThingStatus.OFFLINE);
+            }
+
+            command = new BlueGigaGetInfoCommand();
+            BlueGigaGetInfoResponse infoResponse = (BlueGigaGetInfoResponse) bgHandler.sendTransaction(command);
+
+            // Set mode to non-discoverable etc.
+            // Not doing this will cause connection failures later
+            bgSetMode();
+
+            // Start passive scan
+            bgStartScanning(false, passiveScanInterval, passiveScanWindow);
+
+            Map<String, String> properties = editProperties();
+            properties.put(BluetoothBindingConstants.PROPERTY_MAXCONNECTIONS, Integer.toString(maxConnections));
+            properties.put(Thing.PROPERTY_FIRMWARE_VERSION,
+                    String.format("%d.%d", infoResponse.getMajor(), infoResponse.getMinor()));
+            properties.put(Thing.PROPERTY_HARDWARE_VERSION, Integer.toString(infoResponse.getHardware()));
+            properties.put(BlueGigaBindingConstants.PROPERTY_PROTOCOL,
+                    Integer.toString(infoResponse.getProtocolVersion()));
+            properties.put(BlueGigaBindingConstants.PROPERTY_LINKLAYER, Integer.toString(infoResponse.getLlVersion()));
+            updateProperties(properties);
+        });
     }
 
     @Override
@@ -271,7 +259,7 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
     }
 
     private void openSerialPort(final String serialPortName, int baudRate) {
-        logger.info("Connecting to serial port [{}]", serialPortName);
+        logger.debug("Connecting to serial port '{}'", serialPortName);
         try {
             CommPortIdentifier portIdentifier = CommPortIdentifier.getPortIdentifier(serialPortName);
             CommPort commPort = portIdentifier.open("org.openhab.binding.zigbee", 2000);
@@ -287,13 +275,12 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
             // Start event listener, which will just sleep and slow down event loop
             serialPort.notifyOnDataAvailable(true);
 
-            logger.info("Serial port [{}] is initialized.", portId);
+            logger.info("Connected to serial port '{}'.", serialPortName);
         } catch (NoSuchPortException e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.OFFLINE.COMMUNICATION_ERROR,
-                    "Serial Error: Port does not exist");
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Port does not exist");
             return;
         } catch (PortInUseException e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.OFFLINE.COMMUNICATION_ERROR,
+            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.OFFLINE.CONFIGURATION_ERROR,
                     "Serial Error: Port in use");
             return;
         } catch (UnsupportedCommOperationException e) {
@@ -323,14 +310,14 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
 
                 serialPort.close();
 
+                logger.debug("Closed serial port closed.", serialPort.getName());
+
                 serialPort = null;
                 inputStream = null;
                 outputStream = null;
-
-                logger.info("Serial port [{}] is closed.", portId);
             }
         } catch (Exception e) {
-            logger.error("Error closing serial port", e);
+            logger.error("Error closing serial port.", e);
         }
     }
 

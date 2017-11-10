@@ -9,7 +9,7 @@
             <bridge-type-ref id="bluegiga"/>
         </supported-bridge-type-refs>
     
-        <label>Bluetooth device</label>
+        <label>Bluetooth Device</label>
         <description>A generic Bluetooth device</description>
         <channels>
             <channel id="rssi" typeId="rssi"/>

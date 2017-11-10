@@ -9,7 +9,7 @@
         </supported-bridge-type-refs>
 
 		<label>YeeLightBlue II Light Bulb</label>
-		<description></description>
+		<description>A bluetooth enabled color bulb</description>
 
 		<channels>
 			<channel id="color" typeId="color" />

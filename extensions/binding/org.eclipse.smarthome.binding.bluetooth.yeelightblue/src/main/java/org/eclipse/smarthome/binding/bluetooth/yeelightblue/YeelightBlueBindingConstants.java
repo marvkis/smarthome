@@ -8,6 +8,7 @@
  */
 package org.eclipse.smarthome.binding.bluetooth.yeelightblue;
 
+import org.eclipse.smarthome.binding.bluetooth.BluetoothBindingConstants;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 
 /**
@@ -18,10 +19,9 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
  */
 public class YeelightBlueBindingConstants {
 
-    private static final String BINDING_ID = "ble";
-
     // List of all Thing Type UIDs
-    public static final ThingTypeUID THING_TYPE_BLUE2 = new ThingTypeUID(BINDING_ID, "yeelight_blue2");
+    public static final ThingTypeUID THING_TYPE_BLUE2 = new ThingTypeUID(BluetoothBindingConstants.BINDING_ID,
+            "yeelight_blue2");
 
     // List of all Channel ids
     public final static String CHANNEL_SWITCH = "switch";

@@ -8,6 +8,7 @@
  */
 package org.eclipse.smarthome.binding.bluetooth.bluegiga;
 
+import org.eclipse.smarthome.binding.bluetooth.BluetoothBindingConstants;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 
 /**
@@ -18,18 +19,11 @@ import org.eclipse.smarthome.core.thing.ThingTypeUID;
  */
 public class BlueGigaBindingConstants {
 
-    private static final String BINDING_ID = "ble";
-
     // List of all Thing Type UIDs
-    public static final ThingTypeUID THING_TYPE_BLUEGIGA = new ThingTypeUID(BINDING_ID, "bluegiga");
+    public static final ThingTypeUID THING_TYPE_BLUEGIGA = new ThingTypeUID(BluetoothBindingConstants.BINDING_ID,
+            "bluegiga");
 
-    // List of all Channel ids
-    public static final String CHANNEL_1 = "channel1";
-
-    public static final String CONFIGURATION_PORT = "bluegiga_port";
-
-    public static final String PROPERTY_FIRMWARE = "bluegiga_version_firmware";
-    public static final String PROPERTY_HARDWARE = "bluegiga_version_firmware";
-    public static final String PROPERTY_LINKLAYER = "bluegiga_version_linklayer";
-    public static final String PROPERTY_PROTOCOL = "bluegiga_version_protocol";
+    public static final String CONFIGURATION_PORT = "port";
+    public static final String PROPERTY_LINKLAYER = "linklayer";
+    public static final String PROPERTY_PROTOCOL = "protocol";
 }
