@@ -8,6 +8,7 @@
  */
 package org.eclipse.smarthome.binding.bluetooth;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.smarthome.binding.bluetooth.notification.BluetoothConnectionStatusNotification;
 import org.eclipse.smarthome.binding.bluetooth.notification.BluetoothScanNotification;
 
@@ -17,6 +18,7 @@ import org.eclipse.smarthome.binding.bluetooth.notification.BluetoothScanNotific
  *
  * @author Chris Jackson - Initial contribution
  */
+@NonNullByDefault
 public interface BluetoothDeviceListener {
 
     /**
@@ -58,7 +60,7 @@ public interface BluetoothDeviceListener {
     /**
      * Called when a characteristic value is received. Implementations should call this whenever a value
      * is received from the BLE device even if there is no change to the value.
-     * 
+     *
      * @param characteristic the updated {@link BluetoothCharacteristic}
      */
     void onCharacteristicUpdate(BluetoothCharacteristic characteristic);

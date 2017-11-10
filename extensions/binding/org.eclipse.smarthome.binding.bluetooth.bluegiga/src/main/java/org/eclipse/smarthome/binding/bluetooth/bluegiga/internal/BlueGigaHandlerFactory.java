@@ -24,7 +24,10 @@ import org.eclipse.smarthome.core.thing.ThingUID;
 import org.eclipse.smarthome.core.thing.UID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
+import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
 
 /**
  * The {@link BlueGigaHandlerFactory} is responsible for creating things and thing
@@ -33,6 +36,7 @@ import org.osgi.framework.ServiceRegistration;
  * @author Chris Jackson - Initial contribution
  * @author Kai Kreuzer - added support for adapter service registration
  */
+@Component(service = ThingHandlerFactory.class, immediate = true, configurationPid = "binding.bluegiga", configurationPolicy = ConfigurationPolicy.OPTIONAL)
 public class BlueGigaHandlerFactory extends BaseThingHandlerFactory {
 
     private static final Set<ThingTypeUID> SUPPORTED_THING_TYPES_UIDS = Collections

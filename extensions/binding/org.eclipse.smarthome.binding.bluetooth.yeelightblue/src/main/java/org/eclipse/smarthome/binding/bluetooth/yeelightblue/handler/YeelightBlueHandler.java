@@ -10,27 +10,16 @@ package org.eclipse.smarthome.binding.bluetooth.yeelightblue.handler;
 
 import java.util.UUID;
 
-import org.eclipse.smarthome.binding.bluetooth.BluetoothAdapter;
-import org.eclipse.smarthome.binding.bluetooth.BluetoothAddress;
-import org.eclipse.smarthome.binding.bluetooth.BluetoothBindingConstants;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothCharacteristic;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothCompletionStatus;
-import org.eclipse.smarthome.binding.bluetooth.BluetoothDevice;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothDeviceListener;
-import org.eclipse.smarthome.binding.bluetooth.notification.BluetoothConnectionStatusNotification;
-import org.eclipse.smarthome.binding.bluetooth.notification.BluetoothScanNotification;
+import org.eclipse.smarthome.binding.bluetooth.GenericBluetoothHandler;
 import org.eclipse.smarthome.binding.bluetooth.yeelightblue.YeelightBlueBindingConstants;
-import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.HSBType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.PercentType;
-import org.eclipse.smarthome.core.thing.Bridge;
 import org.eclipse.smarthome.core.thing.ChannelUID;
 import org.eclipse.smarthome.core.thing.Thing;
-import org.eclipse.smarthome.core.thing.ThingStatus;
-import org.eclipse.smarthome.core.thing.ThingStatusDetail;
-import org.eclipse.smarthome.core.thing.ThingStatusInfo;
-import org.eclipse.smarthome.core.thing.binding.BaseThingHandler;
 import org.eclipse.smarthome.core.types.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,8 +29,9 @@ import org.slf4j.LoggerFactory;
  * sent to one of the channels.
  *
  * @author Chris Jackson - Initial contribution
+ * @author Kai Kreuzer - Refactored to extend {@link GenericBluetoothHandler}.
  */
-public class YeelightBlueHandler extends BaseThingHandler implements BluetoothDeviceListener {
+public class YeelightBlueHandler extends GenericBluetoothHandler implements BluetoothDeviceListener {
 
     private final Logger logger = LoggerFactory.getLogger(YeelightBlueHandler.class);
 
@@ -49,73 +39,12 @@ public class YeelightBlueHandler extends BaseThingHandler implements BluetoothDe
     private final UUID UUID_YEELIGHT_STATUS_REQUEST = UUID.fromString("0000fff5-0000-0000-0000-000000000000");
     private final UUID UUID_YEELIGHT_STATUS_RESPONSE = UUID.fromString("0000fff6-0000-0000-0000-000000000000");
 
-    // Remember the bridge - it's our link to the world
-    private BluetoothAdapter bleBridge = null;
-
-    // Our BLE address
-    private BluetoothAddress address;
-
-    // Our device
-    private BluetoothDevice device = null;
-
     // The characteristics we regularly use
     private BluetoothCharacteristic characteristicControl = null;
     private BluetoothCharacteristic characteristicRequest = null;
 
     public YeelightBlueHandler(Thing thing) {
         super(thing);
-    }
-
-    @Override
-    public void initialize() {
-        try {
-            address = new BluetoothAddress((String) getConfig().get(BluetoothBindingConstants.CONFIGURATION_ADDRESS));
-        } catch (IllegalArgumentException e) {
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, e.getLocalizedMessage());
-            return;
-        }
-
-        logger.error("YeeLightBlue: Creating handler at address {}.", address);
-
-        updateStatus(ThingStatus.ONLINE);
-
-        Bridge bridge = getBridge();
-        if (bridge != null) {
-            bridgeStatusChanged(bridge.getStatusInfo());
-        }
-    }
-
-    @Override
-    public void bridgeStatusChanged(ThingStatusInfo bridgeStatusInfo) {
-        if (bridgeStatusInfo.getStatus() != ThingStatus.ONLINE) {
-            // Bridge is offline
-            return;
-        }
-
-        if (bleBridge != null) {
-            return;
-        }
-
-        // Remember the bridge - it's our link to the BLE world
-        bleBridge = (BluetoothAdapter) getBridge().getHandler();
-
-        device = bleBridge.getDevice(address);
-        if (device == null) {
-            logger.error("YeeLightBlue: device not found at address {}.", address);
-            updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR);
-            return;
-        }
-
-        device.addListener(this);
-
-        // if (device.connect() == false) {
-        // logger.error("Error attempting to start connection to {}", device);
-        // }
-    }
-
-    @Override
-    public void dispose() {
-        device.removeListener(this);
     }
 
     @Override
@@ -160,35 +89,6 @@ public class YeelightBlueHandler extends BaseThingHandler implements BluetoothDe
     }
 
     @Override
-    public void onScanRecordReceived(BluetoothScanNotification scanNotification) {
-        updateState(new ChannelUID(getThing().getUID(), BluetoothBindingConstants.CHANNEL_TYPE_RSSI),
-                new DecimalType(scanNotification.getRssi()));
-    }
-
-    @Override
-    public void onConnectionStateChange(BluetoothConnectionStatusNotification connectionNotification) {
-        logger.debug("YeeLightBlue: state changed to {}", connectionNotification.getConnectionState());
-
-        switch (connectionNotification.getConnectionState()) {
-            case DISCOVERED:
-                // The device is now known on the BLE network, so we can do something...
-                if (device.connect() == false) {
-                    logger.debug("YeeLightBlue: Error attempting to connect after discovery");
-                }
-                break;
-            case CONNECTED:
-                if (device.discoverServices() == false) {
-                    logger.debug("YeeLightBlue: Error attempting to discover services");
-                }
-                break;
-            case DISCONNECTED:
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
     public void onServicesDiscovered() {
         // Everything is initialised now - get the characteristics we want to use
         characteristicControl = device.getCharacteristic(UUID_YEELIGHT_CONTROL);
@@ -208,19 +108,8 @@ public class YeelightBlueHandler extends BaseThingHandler implements BluetoothDe
     public void onCharacteristicWriteComplete(BluetoothCharacteristic characteristic,
             BluetoothCompletionStatus status) {
         // If this was a write to the control, then read back the state
-        if (characteristic.getUuid().equals(UUID_YEELIGHT_CONTROL) == true) {
+        if (characteristic.getUuid().equals(UUID_YEELIGHT_CONTROL)) {
             readStatus();
-        }
-    }
-
-    @Override
-    public void onCharacteristicReadComplete(BluetoothCharacteristic characteristic, BluetoothCompletionStatus status) {
-        if (status == BluetoothCompletionStatus.SUCCESS) {
-            logger.debug("Characteristic {} from {} has been read - value {}", characteristic.getUuid(), address,
-                    characteristic.getValue());
-        } else {
-            logger.debug("Characteristic {} from {} has been read - ERROR", characteristic.getUuid(), address);
-            return;
         }
     }
 
@@ -232,7 +121,6 @@ public class YeelightBlueHandler extends BaseThingHandler implements BluetoothDe
 
             String[] elements = value.split(",");
 
-            float[] hsb = new float[3];
             int red, green, blue, light;
             try {
                 red = Integer.parseInt(elements[0]);
