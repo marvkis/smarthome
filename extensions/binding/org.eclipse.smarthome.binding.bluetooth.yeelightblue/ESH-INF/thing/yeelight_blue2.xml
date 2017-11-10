@@ -6,7 +6,7 @@
 	<!-- Sample Thing Type -->
 	<thing-type id="yeelight_blue2" listed="false">
 		<label>YeeLightBlue II Light Bulb</label>
-		<description></description>
+		<description>A bluetooth enabled color bulb</description>
 
 		<channels>
 			<channel id="switch" typeId="switch">

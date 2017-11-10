@@ -56,9 +56,10 @@ public class BlueGigaHandlerFactory extends BaseThingHandlerFactory {
         if (thingTypeUID.equals(BlueGigaBindingConstants.THING_TYPE_BLUEGIGA)) {
             BlueGigaBridgeHandler handler = new BlueGigaBridgeHandler((Bridge) thing);
             registerBluetoothAdapter(handler);
+            return handler;
+        } else {
+            return null;
         }
-
-        return null;
     }
 
     private synchronized void registerBluetoothAdapter(BluetoothAdapter adapter) {
