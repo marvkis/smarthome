@@ -25,18 +25,19 @@ import java.util.UUID;
  * @author Chris Jackson - Initial contribution
  */
 public class BluetoothService {
+
     // The service UUID
     private final UUID uuid;
 
     /**
      * The start handle for this service
      */
-    private int handleStart;
+    private final int handleStart;
 
     /**
      * The end handle for this service
      */
-    private int handleEnd;
+    private final int handleEnd;
 
     protected int instanceId;
 
@@ -130,7 +131,7 @@ public class BluetoothService {
 
     /**
      * Checks if the service provides a specific characteristic
-     * 
+     *
      * @return true if the characteristic is provided in this service
      */
     public boolean providesCharacteristic(UUID uuid) {
