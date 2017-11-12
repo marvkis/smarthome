@@ -1,6 +1,5 @@
 /**
- * Copyright (c) 2010-2017 by the respective copyright holders.
- *
+ * Copyright (c) 2014-2017 by the respective copyright holders.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +15,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.eclipse.smarthome.binding.bluetooth.BluetoothAdapter;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothBindingConstants;
+import org.eclipse.smarthome.binding.bluetooth.BluetoothCompanyIdentifiers;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothDevice;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothDiscoveryListener;
 import org.eclipse.smarthome.binding.bluetooth.discovery.BluetoothDiscoveryParticipant;
@@ -126,6 +126,7 @@ public class BluetoothDiscoveryService extends AbstractDiscoveryService {
         for (BluetoothAdapter adapter : adapters) {
             adapter.scanStop();
         }
+        removeOlderResults(getTimestampOfLastScan());
     }
 
     private void deviceDiscovered(BluetoothAdapter adapter, BluetoothDevice device) {
@@ -144,14 +145,26 @@ public class BluetoothDiscoveryService extends AbstractDiscoveryService {
         // We did not find a thing type for this device, so let's treat it as a generic one
         String label = device.getName();
         if (label == null || label.length() == 0) {
-            label = "Bluetooth Device " + device.getAddress().toString();
+            label = "Bluetooth Device";
         }
 
         Map<String, Object> properties = new HashMap<>();
         properties.put(BluetoothBindingConstants.CONFIGURATION_ADDRESS, device.getAddress().toString());
-        properties.put(BluetoothBindingConstants.PROPERTY_TXPOWER, Integer.toString(device.getTxPower()));
+        Integer txPower = device.getTxPower();
+        if (txPower != null) {
+            properties.put(BluetoothBindingConstants.PROPERTY_TXPOWER, Integer.toString(txPower));
+        }
+        String manufacturer = null;
         if (device.getManufacturerName() != null) {
-            properties.put(Thing.PROPERTY_VENDOR, device.getManufacturerName());
+            manufacturer = device.getManufacturerName();
+        } else {
+            manufacturer = BluetoothCompanyIdentifiers.get(device.getManufacturerId());
+        }
+        if (manufacturer != null) {
+            properties.put(Thing.PROPERTY_VENDOR, manufacturer);
+            label += " (" + manufacturer + ")";
+        } else {
+            label += " (" + device.getAddress() + ")";
         }
 
         ThingUID thingUID = new ThingUID(BluetoothBindingConstants.THING_TYPE_GENERIC, adapter.getUID(),
