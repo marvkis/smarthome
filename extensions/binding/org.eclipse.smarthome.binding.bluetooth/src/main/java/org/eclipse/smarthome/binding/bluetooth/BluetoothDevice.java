@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
  * The {@link BluetoothDevice} class provides a base implementation of a Bluetooth Low Energy device
  *
  * @author Chris Jackson - Initial contribution
+ * @author Kai Kreuzer - Refactored class to use Integer instead of int
  */
 public class BluetoothDevice {
     private final Logger logger = LoggerFactory.getLogger(BluetoothDevice.class);
@@ -80,12 +81,7 @@ public class BluetoothDevice {
     /**
      * Manufacturer id
      */
-    protected int manufacturer = -1;
-
-    /**
-     * Manufacturer name
-     */
-    protected String manufacturerName = null;
+    protected Integer manufacturer = null;
 
     /**
      * Device name.
@@ -115,7 +111,7 @@ public class BluetoothDevice {
     private final List<BluetoothDeviceListener> eventListeners = new CopyOnWriteArrayList<BluetoothDeviceListener>();
 
     /**
-     * Construct a BLE Device taking the Bluetooth address
+     * Construct a Bluetooth device taking the Bluetooth address
      *
      * @param sender
      */
@@ -148,25 +144,15 @@ public class BluetoothDevice {
      */
     public void setManufacturerId(int manufacturer) {
         this.manufacturer = manufacturer;
-        this.manufacturerName = BluetoothManufacturer.getManufacturer(manufacturer);
     }
 
     /**
      * Returns the manufacturer ID of the device
      *
-     * @return an integer with manufacturer ID of the device, or -1 if not known
+     * @return an integer with manufacturer ID of the device, or null if not known
      */
-    public int getManufacturerId() {
+    public Integer getManufacturerId() {
         return manufacturer;
-    }
-
-    /**
-     * Returns the manufacturer name of the device
-     *
-     * @return an integer with manufacturer ID of the device, or -1 if not known
-     */
-    public String getManufacturerName() {
-        return manufacturerName;
     }
 
     /**
@@ -476,9 +462,9 @@ public class BluetoothDevice {
         builder.append(", rssi=");
         builder.append(rssi);
         builder.append(", manufacturer=");
-        if (manufacturerName != null) {
+        if (BluetoothCompanyIdentifiers.get(manufacturer) != null) {
             builder.append('(');
-            builder.append(manufacturerName);
+            builder.append(BluetoothCompanyIdentifiers.get(manufacturer));
             builder.append(')');
         }
         builder.append(manufacturer);
