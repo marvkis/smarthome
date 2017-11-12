@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * The {@link BluetoothCharacteristic} class defines the BLE Service.
@@ -48,7 +49,7 @@ public class BluetoothService {
     /**
      * Map of {@link BluetoothCharacteristic}s supported in this service
      */
-    protected final Map<UUID, BluetoothCharacteristic> supportedCharacteristics = new HashMap<UUID, BluetoothCharacteristic>();
+    protected final Map<UUID, BluetoothCharacteristic> supportedCharacteristics = new ConcurrentHashMap<>();
 
     public BluetoothService(UUID uuid) {
         this(uuid, true, 0, 0);

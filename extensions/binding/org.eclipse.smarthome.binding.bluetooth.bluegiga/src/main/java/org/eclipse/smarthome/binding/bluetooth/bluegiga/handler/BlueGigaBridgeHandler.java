@@ -10,7 +10,6 @@ package org.eclipse.smarthome.binding.bluetooth.bluegiga.handler;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -129,16 +128,16 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
 
     // Map of Bluetooth devices known to this bridge.
     // This is all devices we have heard on the network - not just things bound to the bridge
-    private final Map<BluetoothAddress, BluetoothDevice> devices = new HashMap<>();
+    private final Map<BluetoothAddress, BluetoothDevice> devices = new ConcurrentHashMap<>();
 
     // Map of open connections
-    private final Map<Integer, BluetoothAddress> connections = new HashMap<Integer, BluetoothAddress>();
+    private final Map<Integer, BluetoothAddress> connections = new ConcurrentHashMap<>();
 
     // Set of discovery listeners
     protected final Set<BluetoothDiscoveryListener> discoveryListeners = new CopyOnWriteArraySet<>();
 
     // List of device listeners
-    protected final ConcurrentHashMap<BluetoothAddress, BluetoothDeviceListener> deviceListeners = new ConcurrentHashMap<BluetoothAddress, BluetoothDeviceListener>();
+    protected final ConcurrentHashMap<BluetoothAddress, BluetoothDeviceListener> deviceListeners = new ConcurrentHashMap<>();
 
     public BlueGigaBridgeHandler(Bridge bridge) {
         super(bridge);
@@ -390,21 +389,12 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
             return false;
         }
 
-        if (connections.size() == maxConnections) {
-            for (int retries = 3; retries > 0; retries--) {
-                if (connections.size() == maxConnections) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                    }
-                } else {
-                    break;
-                }
-            }
-            if (connections.size() == maxConnections) {
-                logger.debug("BlueGiga: Attempt to connect to {} but no connections available.", address);
-                return false;
-            }
+        // FIXME: When getting here, I always found all connections to be already taken and thus the code never
+        // proceeded. Relaxing this condition did not do any obvious harm, but now guaranteed that the services are
+        // queried from the device.
+        if (connections.size() == maxConnections + 1) {
+            logger.debug("BlueGiga: Attempt to connect to {} but no connections available.", address);
+            return false;
         }
 
         bgSetMode();
@@ -467,9 +457,8 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
         command.setStart(1);
         command.setEnd(65535);
         command.setUuid(UUID.fromString("00002800-0000-0000-0000-000000000000"));
-        BlueGigaResponse response = bgHandler.sendTransaction(command);
-        return (response instanceof BlueGigaReadByGroupTypeResponse
-                && ((BlueGigaReadByGroupTypeResponse) response).getResult() == BgApiResponse.SUCCESS);
+        BlueGigaReadByGroupTypeResponse response = (BlueGigaReadByGroupTypeResponse) bgHandler.sendTransaction(command);
+        return response.getResult() == BgApiResponse.SUCCESS;
     }
 
     /**
