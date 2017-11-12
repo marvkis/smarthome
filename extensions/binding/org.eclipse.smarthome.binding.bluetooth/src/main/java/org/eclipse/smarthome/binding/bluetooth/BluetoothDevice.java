@@ -77,12 +77,12 @@ public class BluetoothDevice {
     /**
      * The adapter the device is accessed through
      */
-    protected BluetoothAdapter adapter;
+    protected final BluetoothAdapter adapter;
 
     /**
      * Devices Bluetooth address
      */
-    protected BluetoothAddress address;
+    protected final BluetoothAddress address;
 
     /**
      * Manufacturer id
@@ -119,10 +119,13 @@ public class BluetoothDevice {
     /**
      * Construct a Bluetooth device taking the Bluetooth address
      *
+     * @param adapter
+     *
      * @param sender
      */
-    public BluetoothDevice(BluetoothAddress address) {
+    public BluetoothDevice(BluetoothAdapter adapter, BluetoothAddress address) {
         this.address = address;
+        this.adapter = adapter;
     }
 
     /**
@@ -294,7 +297,7 @@ public class BluetoothDevice {
     }
 
     /**
-     * Gets a BLE characteristic if it is known.
+     * Gets a Bluetooth characteristic if it is known.
      * <p>
      * Note that this method will not search for a characteristic in the remote device if it is not known.
      * You must have previously connected to the device so that the device services and characteristics can
@@ -354,7 +357,7 @@ public class BluetoothDevice {
             return false;
         }
 
-        logger.debug("BLE adding new service to device {}: {}", address, service);
+        logger.debug("Adding new service to device {}: {}", address, service);
 
         supportedServices.put(service.getUuid(), service);
         return true;
@@ -479,12 +482,12 @@ public class BluetoothDevice {
         builder.append(", rssi=");
         builder.append(rssi);
         builder.append(", manufacturer=");
+        builder.append(manufacturer);
         if (BluetoothCompanyIdentifiers.get(manufacturer) != null) {
-            builder.append('(');
+            builder.append(" (");
             builder.append(BluetoothCompanyIdentifiers.get(manufacturer));
             builder.append(')');
         }
-        builder.append(manufacturer);
         builder.append(']');
         return builder.toString();
     }

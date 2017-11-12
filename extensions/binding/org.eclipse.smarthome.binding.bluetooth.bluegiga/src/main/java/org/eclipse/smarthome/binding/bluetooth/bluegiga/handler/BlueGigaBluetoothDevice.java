@@ -10,11 +10,11 @@ package org.eclipse.smarthome.binding.bluetooth.bluegiga.handler;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.smarthome.binding.bluetooth.BluetoothAddress;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothCharacteristic;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothCompletionStatus;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothDevice;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothService;
-import org.eclipse.smarthome.binding.bluetooth.BluetoothAddress;
 import org.eclipse.smarthome.binding.bluetooth.notification.BluetoothConnectionStatusNotification;
 import org.eclipse.smarthome.binding.bluetooth.notification.BluetoothScanNotification;
 import org.eclipse.smarthome.binding.bluetooth.notification.BluetoothScanNotification.BluetoothBeaconType;
@@ -49,10 +49,10 @@ public class BlueGigaBluetoothDevice extends BluetoothDevice implements BlueGiga
     private BluetoothAddressType addressType;
 
     // Used to correlate the scans so we get as much information as possible before calling the device "discovered"
-    private Set<ScanResponseType> scanResponses = new HashSet<ScanResponseType>();
+    private final Set<ScanResponseType> scanResponses = new HashSet<ScanResponseType>();
 
     // The dongle handler
-    private BlueGigaBridgeHandler bgHandler;
+    private final BlueGigaBridgeHandler bgHandler;
 
     // An enum to use in the state machine for interacting with the device
     private enum BlueGigaProcedure {
@@ -72,7 +72,8 @@ public class BlueGigaBluetoothDevice extends BluetoothDevice implements BlueGiga
     private int connection = -1;
 
     /**
-     * Creates a new {@link BlueGigaBluetoothDevice} which extends {@link BluetoothDevice} for the BlueGiga implementation
+     * Creates a new {@link BlueGigaBluetoothDevice} which extends {@link BluetoothDevice} for the BlueGiga
+     * implementation
      *
      * @param bgHandler the {@link BlueGigaBridgeHandler} that provides the link to the dongle
      * @param address the {@link BluetoothAddress} for this device
@@ -80,7 +81,7 @@ public class BlueGigaBluetoothDevice extends BluetoothDevice implements BlueGiga
      */
     public BlueGigaBluetoothDevice(BlueGigaBridgeHandler bgHandler, BluetoothAddress address,
             BluetoothAddressType addressType) {
-        super(address);
+        super(bgHandler, address);
 
         logger.debug("Creating new BlueGiga device {}", address);
 
@@ -301,7 +302,8 @@ public class BlueGigaBluetoothDevice extends BluetoothDevice implements BlueGiga
 
             logger.debug("BlueGiga FindInfo: {} svcs={}", this, supportedServices);
 
-            BluetoothCharacteristic characteristic = new BluetoothCharacteristic(infoEvent.getUuid(), infoEvent.getChrHandle());
+            BluetoothCharacteristic characteristic = new BluetoothCharacteristic(infoEvent.getUuid(),
+                    infoEvent.getChrHandle());
 
             BluetoothService service = getServiceByHandle(characteristic.getHandle());
             if (service == null) {
@@ -350,7 +352,8 @@ public class BlueGigaBluetoothDevice extends BluetoothDevice implements BlueGiga
                 case CHARACTERISTIC_WRITE:
                     // The write completed - failure or success
                     BluetoothCompletionStatus result = completedEvent.getResult() == BgApiResponse.SUCCESS
-                            ? BluetoothCompletionStatus.SUCCESS : BluetoothCompletionStatus.ERROR;
+                            ? BluetoothCompletionStatus.SUCCESS
+                            : BluetoothCompletionStatus.ERROR;
                     notifyListeners(BluetoothEventType.CHARACTERISTIC_WRITE_COMPLETE, procedureCharacteristic, result);
                     procedureProgress = BlueGigaProcedure.NONE;
                     procedureCharacteristic = null;
@@ -377,7 +380,8 @@ public class BlueGigaBluetoothDevice extends BluetoothDevice implements BlueGiga
             }
 
             if (connectionEvent.getFlags().contains(ConnectionStatusFlag.CONNECTION_CONNECTED)) {
-                notifyListeners(BluetoothEventType.CONNECTION_STATE, new BluetoothConnectionStatusNotification(connectionState));
+                notifyListeners(BluetoothEventType.CONNECTION_STATE,
+                        new BluetoothConnectionStatusNotification(connectionState));
             }
 
             return;
@@ -393,7 +397,8 @@ public class BlueGigaBluetoothDevice extends BluetoothDevice implements BlueGiga
 
             connectionState = ConnectionState.DISCONNECTED;
             connection = -1;
-            notifyListeners(BluetoothEventType.CONNECTION_STATE, new BluetoothConnectionStatusNotification(connectionState));
+            notifyListeners(BluetoothEventType.CONNECTION_STATE,
+                    new BluetoothConnectionStatusNotification(connectionState));
 
             return;
         }
