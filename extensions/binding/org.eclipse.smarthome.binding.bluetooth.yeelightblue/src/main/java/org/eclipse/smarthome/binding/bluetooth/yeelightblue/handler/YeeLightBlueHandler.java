@@ -47,6 +47,13 @@ public class YeelightBlueHandler extends GenericBluetoothHandler implements Blue
     }
 
     @Override
+    public void initialize() {
+        super.initialize();
+        device.connect();
+        device.discoverServices();
+    }
+
+    @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
         String value = null;
 
