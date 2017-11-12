@@ -13,7 +13,7 @@
 	<artifactId>org.eclipse.smarthome.binding.bluetooth.bluegiga</artifactId>
 	<version>0.9.0-SNAPSHOT</version>
 
-	<name>Ble.BlueGiga Binding</name>
+	<name>Eclipse SmartHome BlueGiga Bluetooth Adapter</name>
 	<packaging>eclipse-plugin</packaging>
 
 </project>
