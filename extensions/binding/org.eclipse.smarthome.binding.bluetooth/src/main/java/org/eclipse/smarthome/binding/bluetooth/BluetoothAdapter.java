@@ -45,10 +45,8 @@ public interface BluetoothAdapter extends Identifiable<ThingUID> {
 
     /**
      * Starts an active scan on the Bluetooth interface.
-     *
-     * @return true if the scan was started
      */
-    boolean scanStart();
+    void scanStart();
 
     /**
      * Stops an active scan on the Bluetooth interface
