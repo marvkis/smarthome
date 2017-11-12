@@ -17,7 +17,7 @@ import org.eclipse.smarthome.binding.bluetooth.BluetoothService;
 import org.eclipse.smarthome.binding.bluetooth.BluetoothAddress;
 import org.eclipse.smarthome.binding.bluetooth.notification.BluetoothConnectionStatusNotification;
 import org.eclipse.smarthome.binding.bluetooth.notification.BluetoothScanNotification;
-import org.eclipse.smarthome.binding.bluetooth.notification.BluetoothScanNotification.BleBeaconType;
+import org.eclipse.smarthome.binding.bluetooth.notification.BluetoothScanNotification.BluetoothBeaconType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -254,10 +254,10 @@ public class BlueGigaBluetoothDevice extends BluetoothDevice implements BlueGiga
                 case CONNECTABLE_ADVERTISEMENT:
                 case DISCOVERABLE_ADVERTISEMENT:
                 case NON_CONNECTABLE_ADVERTISEMENT:
-                    scanNotification.setBeaconType(BleBeaconType.BEACON_ADVERTISEMENT);
+                    scanNotification.setBeaconType(BluetoothBeaconType.BEACON_ADVERTISEMENT);
                     break;
                 case SCAN_RESPONSE:
-                    scanNotification.setBeaconType(BleBeaconType.BEACON_SCANRESPONSE);
+                    scanNotification.setBeaconType(BluetoothBeaconType.BEACON_SCANRESPONSE);
                     break;
                 default:
                     break;

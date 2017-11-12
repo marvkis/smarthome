@@ -31,7 +31,7 @@ public class BluetoothScanNotification extends BluetoothNotification {
     /**
      * The beacon type
      */
-    private BleBeaconType beaconType = BleBeaconType.BEACON_UNKNOWN;
+    private BluetoothBeaconType beaconType = BluetoothBeaconType.BEACON_UNKNOWN;
 
     /**
      * The device name
@@ -41,7 +41,7 @@ public class BluetoothScanNotification extends BluetoothNotification {
     /**
      * An enumeration of basic beacon types
      */
-    public enum BleBeaconType {
+    public enum BluetoothBeaconType {
         BEACON_UNKNOWN,
         BEACON_ADVERTISEMENT,
         BEACON_SCANRESPONSE
@@ -104,18 +104,18 @@ public class BluetoothScanNotification extends BluetoothNotification {
     /**
      * Sets the beacon type for this packet
      *
-     * @beaconType the {@link BleBeaconType} for this packet
+     * @beaconType the {@link BluetoothBeaconType} for this packet
      */
-    public void setBeaconType(BleBeaconType beaconType) {
+    public void setBeaconType(BluetoothBeaconType beaconType) {
         this.beaconType = beaconType;
     }
 
     /**
      * Gets the beacon type for this packet
      *
-     * @return the {@link BleBeaconType} for this packet
+     * @return the {@link BluetoothBeaconType} for this packet
      */
-    public BleBeaconType getBeaconType() {
+    public BluetoothBeaconType getBeaconType() {
         return beaconType;
     }
 
