@@ -70,7 +70,6 @@ public class GenericBluetoothHandler extends BaseThingHandler implements Bluetoo
         adapter = (BluetoothAdapter) bridgeHandler;
         device = adapter.getDevice(address);
         device.addListener(this);
-        device.connect();
     }
 
     @Override
