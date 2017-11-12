@@ -154,12 +154,7 @@ public class BluetoothDiscoveryService extends AbstractDiscoveryService {
         if (txPower != null) {
             properties.put(BluetoothBindingConstants.PROPERTY_TXPOWER, Integer.toString(txPower));
         }
-        String manufacturer = null;
-        if (device.getManufacturerName() != null) {
-            manufacturer = device.getManufacturerName();
-        } else {
-            manufacturer = BluetoothCompanyIdentifiers.get(device.getManufacturerId());
-        }
+        String manufacturer = BluetoothCompanyIdentifiers.get(device.getManufacturerId());
         if (manufacturer != null) {
             properties.put(Thing.PROPERTY_VENDOR, manufacturer);
             label += " (" + manufacturer + ")";

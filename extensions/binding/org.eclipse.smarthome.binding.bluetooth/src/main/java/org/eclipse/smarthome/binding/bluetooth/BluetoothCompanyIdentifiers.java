@@ -10,12 +10,16 @@ package org.eclipse.smarthome.binding.bluetooth;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+
 /**
  * See https://www.bluetooth.com/specifications/assigned-numbers/company-identifiers
  *
  * @author Kai Kreuzer - Initial contribution and API
  *
  */
+@NonNullByDefault
 public class BluetoothCompanyIdentifiers {
 
     private static final Map<Integer, String> cic = new HashMap<>();
@@ -1441,7 +1445,17 @@ public class BluetoothCompanyIdentifiers {
         cic.put(1417, "Star Technologies");
     }
 
-    public static String get(int id) {
-        return cic.get(id);
+    /**
+     * Returns the company name as a String
+     *
+     * @param id the Bluetooth company identifier
+     * @return The company name
+     */
+    public static @Nullable String get(@Nullable Integer id) {
+        if (id != null) {
+            return cic.get(id);
+        } else {
+            return null;
+        }
     }
 }
