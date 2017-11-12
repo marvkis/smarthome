@@ -58,8 +58,11 @@ public class YeelightDiscoveryParticipant implements BluetoothDiscoveryParticipa
 
             Map<String, Object> properties = new HashMap<>();
             properties.put(BluetoothBindingConstants.CONFIGURATION_ADDRESS, device.getAddress().toString());
-            properties.put(BluetoothBindingConstants.PROPERTY_TXPOWER, Integer.toString(device.getTxPower()));
             properties.put(Thing.PROPERTY_VENDOR, "Yeelight");
+            Integer txPower = device.getTxPower();
+            if (txPower != null) {
+                properties.put(BluetoothBindingConstants.PROPERTY_TXPOWER, Integer.toString(txPower));
+            }
 
             // Create the discovery result and add to the inbox
             return DiscoveryResultBuilder.create(thingUID).withProperties(properties)

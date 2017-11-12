@@ -26,10 +26,11 @@ import org.slf4j.LoggerFactory;
  * @author Kai Kreuzer - Refactored class to use Integer instead of int
  */
 public class BluetoothDevice {
+
     private final Logger logger = LoggerFactory.getLogger(BluetoothDevice.class);
 
     /**
-     * Enumeration of BLE connection states
+     * Enumeration of Bluetooth connection states
      *
      */
     public enum ConnectionState {
@@ -59,7 +60,7 @@ public class BluetoothDevice {
         DISCONNECTING
     }
 
-    protected enum BleEventType {
+    protected enum BluetoothEventType {
         CONNECTION_STATE,
         SCAN_RECORD,
         CHARACTERISTIC_READ_COMPLETE,
@@ -74,9 +75,14 @@ public class BluetoothDevice {
     protected ConnectionState connectionState = ConnectionState.DISCOVERING;
 
     /**
+     * The adapter the device is accessed through
+     */
+    protected final BluetoothAdapter adapter;
+
+    /**
      * Devices Bluetooth address
      */
-    protected BluetoothAddress address;
+    protected final BluetoothAddress address;
 
     /**
      * Manufacturer id
@@ -113,10 +119,13 @@ public class BluetoothDevice {
     /**
      * Construct a Bluetooth device taking the Bluetooth address
      *
+     * @param adapter
+     *
      * @param sender
      */
-    public BluetoothDevice(BluetoothAddress address) {
+    public BluetoothDevice(BluetoothAdapter adapter, BluetoothAddress address) {
         this.address = address;
+        this.adapter = adapter;
     }
 
     /**
@@ -135,6 +144,15 @@ public class BluetoothDevice {
      */
     public BluetoothAddress getAddress() {
         return address;
+    }
+
+    /**
+     * Returns the adapter through which the device is accessed
+     *
+     * @return The adapter through which the device is accessed
+     */
+    public BluetoothAdapter getAdapter() {
+        return adapter;
     }
 
     /**
@@ -254,7 +272,8 @@ public class BluetoothDevice {
     }
 
     /**
-     * Disconnects from a device. Once the connection state is updated, the {@link BluetoothDeviceListener.onConnectionState}
+     * Disconnects from a device. Once the connection state is updated, the
+     * {@link BluetoothDeviceListener.onConnectionState}
      * method will be called with the connection state.
      * <p>
      * If the device is not currently connected, this will return false.
@@ -278,7 +297,7 @@ public class BluetoothDevice {
     }
 
     /**
-     * Gets a BLE characteristic if it is known.
+     * Gets a Bluetooth characteristic if it is known.
      * <p>
      * Note that this method will not search for a characteristic in the remote device if it is not known.
      * You must have previously connected to the device so that the device services and characteristics can
@@ -300,7 +319,8 @@ public class BluetoothDevice {
      * Reads a characteristic. Only a single read or write operation can be requested at once. Attempting to perform an
      * operation when one is already in progress will result in subsequent calls returning false.
      * <p>
-     * This is an asynchronous method. Once the read is complete {@link BluetoothDeviceListener.onCharacteristicReadComplete}
+     * This is an asynchronous method. Once the read is complete
+     * {@link BluetoothDeviceListener.onCharacteristicReadComplete}
      * method will be called with the completion state.
      * <p>
      * Note that {@link BluetoothDeviceListener.onCharacteristicUpdate} will be called when the read value is received.
@@ -337,7 +357,7 @@ public class BluetoothDevice {
             return false;
         }
 
-        logger.debug("BLE adding new service to device {}: {}", address, service);
+        logger.debug("Adding new service to device {}: {}", address, service);
 
         supportedServices.put(service.getUuid(), service);
         return true;
@@ -417,10 +437,10 @@ public class BluetoothDevice {
     /**
      * Notify the listeners of an event
      *
-     * @param event the {@link BleEventType} of this event
+     * @param event the {@link BluetoothEventType} of this event
      * @param args an array of arguments to pass to the callback
      */
-    protected void notifyListeners(BleEventType event, Object... args) {
+    protected void notifyListeners(BluetoothEventType event, Object... args) {
         for (BluetoothDeviceListener listener : eventListeners) {
             try {
                 switch (event) {
@@ -462,12 +482,12 @@ public class BluetoothDevice {
         builder.append(", rssi=");
         builder.append(rssi);
         builder.append(", manufacturer=");
+        builder.append(manufacturer);
         if (BluetoothCompanyIdentifiers.get(manufacturer) != null) {
-            builder.append('(');
+            builder.append(" (");
             builder.append(BluetoothCompanyIdentifiers.get(manufacturer));
             builder.append(')');
         }
-        builder.append(manufacturer);
         builder.append(']');
         return builder.toString();
     }

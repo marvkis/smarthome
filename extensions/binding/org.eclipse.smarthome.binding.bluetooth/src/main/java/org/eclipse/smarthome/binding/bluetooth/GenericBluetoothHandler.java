@@ -81,14 +81,16 @@ public class GenericBluetoothHandler extends BaseThingHandler implements Bluetoo
     @Override
     public void handleCommand(ChannelUID channelUID, Command command) {
         if (command instanceof RefreshType) {
-
+            Integer rssi = device.getRssi();
+            if (rssi != null) {
+                updateState(BluetoothBindingConstants.CHANNEL_TYPE_RSSI, new DecimalType(rssi));
+            }
         }
     }
 
     @Override
     public void onScanRecordReceived(BluetoothScanNotification scanNotification) {
-        updateState(new ChannelUID(getThing().getUID(), BluetoothBindingConstants.CHANNEL_TYPE_RSSI),
-                new DecimalType(scanNotification.getRssi()));
+        updateState(BluetoothBindingConstants.CHANNEL_TYPE_RSSI, new DecimalType(scanNotification.getRssi()));
     }
 
     @Override

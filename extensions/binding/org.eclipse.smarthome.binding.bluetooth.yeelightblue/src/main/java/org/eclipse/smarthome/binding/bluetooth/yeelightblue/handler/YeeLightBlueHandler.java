@@ -120,7 +120,7 @@ public class YeelightBlueHandler extends GenericBluetoothHandler implements Blue
 
             String[] elements = value.split(",");
 
-            int red, green, blue, light;
+            int red, green, blue;
             try {
                 red = Integer.parseInt(elements[0]);
             } catch (NumberFormatException e) {
@@ -136,19 +136,10 @@ public class YeelightBlueHandler extends GenericBluetoothHandler implements Blue
             } catch (NumberFormatException e) {
                 blue = 0;
             }
-            try {
-                light = Integer.parseInt(elements[3]);
-            } catch (NumberFormatException e) {
-                light = 0;
-            }
 
             HSBType hsbState = HSBType.fromRGB(red, green, blue);
 
             updateState(new ChannelUID(getThing().getUID(), YeelightBlueBindingConstants.CHANNEL_COLOR), hsbState);
-            updateState(new ChannelUID(getThing().getUID(), YeelightBlueBindingConstants.CHANNEL_SWITCH),
-                    light == 0 ? OnOffType.OFF : OnOffType.ON);
-            updateState(new ChannelUID(getThing().getUID(), YeelightBlueBindingConstants.CHANNEL_BRIGHTNESS),
-                    new PercentType(light));
         }
     }
 
