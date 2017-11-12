@@ -13,7 +13,7 @@
 	<artifactId>org.eclipse.smarthome.binding.bluetooth</artifactId>
 	<version>0.9.0-SNAPSHOT</version>
 
-	<name>Ble Binding</name>
+	<name>Eclipse SmartHome Bluetooth Binding</name>
 	<packaging>eclipse-plugin</packaging>
 
 </project>
