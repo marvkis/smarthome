@@ -1,6 +1,5 @@
 /**
- * Copyright (c) 2010-2017 by the respective copyright holders.
- *
+ * Copyright (c) 2014-2017 by the respective copyright holders.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,7 +129,7 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
 
     // Map of Bluetooth devices known to this bridge.
     // This is all devices we have heard on the network - not just things bound to the bridge
-    private final Map<BluetoothAddress, @Nullable BluetoothDevice> devices = new HashMap<>();
+    private final Map<BluetoothAddress, BluetoothDevice> devices = new HashMap<>();
 
     // Map of open connections
     private final Map<Integer, BluetoothAddress> connections = new HashMap<Integer, BluetoothAddress>();
@@ -165,49 +164,20 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
             updateStatus(ThingStatus.OFFLINE, ThingStatusDetail.CONFIGURATION_ERROR, "Serial port must be configured!");
             return;
         }
+        openSerialPort(portId, 115200);
+        bgHandler = new BlueGigaSerialHandler(inputStream, outputStream);
+        // Create and send the reset command to the dongle
+        bgHandler.addEventListener(me);
+        bgHandler.addEventListener(me);
+
         updateStatus(ThingStatus.UNKNOWN);
 
         scheduler.submit(() -> {
-            openSerialPort(portId, 115200);
-
-            // BlueGigaCommand command1 = new BlueGigaAddressGetCommand();
-            // BlueGigaAddressGetResponse addressResponse1 = (BlueGigaAddressGetResponse) bgHandler
-            // .sendTransaction(command1);
-            // if (addressResponse1 != null) {
-            // btAddress = addressResponse1.getAddress();
-            // }
-
-            // Create and send the reset command to the dongle
-            BlueGigaCommand command; // = new BlueGigaResetCommand();
-            // bgHandler.queueFrame(command);
-
-            // The reset command has no response. It will however reset the serial interface!
-            // We wait a short while, then close and re-open the serial port.
-            // try {
-            // Thread.sleep(250);
-            // closeSerialPort();
-            // Thread.sleep(250);
-            // } catch (InterruptedException e) {
-            // If we're interrupted, then close.
-            // Should only happen if the binding gets closed
-            // return;
-            // }
-
-            // Open the port for the final time
-            // openSerialPort(portId, 115200);
-
-            // Create the handler
-            bgHandler = new BlueGigaSerialHandler(inputStream, outputStream);
-
-            // xxxx
-
-            bgHandler.addEventListener(me);
-            bgHandler.addEventListener(me);
-
             // Stop any procedures that are running
             bgStopProcedure();
 
             // Close all transactions
+            BlueGigaCommand command; // = new BlueGigaResetCommand();
             command = new BlueGigaGetConnectionsCommand();
             BlueGigaGetConnectionsResponse connectionsResponse = (BlueGigaGetConnectionsResponse) bgHandler
                     .sendTransaction(command);
@@ -321,6 +291,7 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
         }
     }
 
+    @SuppressWarnings({ "unused", "null" })
     @Override
     public void bluegigaEventReceived(@Nullable BlueGigaResponse event) {
         if (event instanceof BlueGigaScanResponseEvent) {
@@ -335,6 +306,7 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
                 device = new BlueGigaBluetoothDevice(this, new BluetoothAddress(scanEvent.getSender()),
                         scanEvent.getAddressType());
                 devices.put(sender, device);
+                deviceDiscovered(device);
             }
 
             return;
@@ -354,13 +326,16 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
     }
 
     @Override
-    public boolean scanStart() {
+    public void scanStart() {
         // Stop the passive scan
         bgStopProcedure();
 
         // Start a active scan
         bgStartScanning(true, activeScanInterval, activeScanWindow);
-        return false;
+
+        for (BluetoothDevice device : devices.values()) {
+            deviceDiscovered(device);
+        }
     }
 
     @Override
@@ -381,6 +356,7 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
         }
     }
 
+    @SuppressWarnings({ "null", "unused" })
     @Override
     public BluetoothDevice getDevice(BluetoothAddress address) {
         BluetoothDevice device = devices.get(address);
@@ -415,8 +391,20 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
         }
 
         if (connections.size() == maxConnections) {
-            logger.debug("BlueGiga: Attempt to connect to {} but no connections available.", address);
-            return false;
+            for (int retries = 3; retries > 0; retries--) {
+                if (connections.size() == maxConnections) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                    }
+                } else {
+                    break;
+                }
+            }
+            if (connections.size() == maxConnections) {
+                logger.debug("BlueGiga: Attempt to connect to {} but no connections available.", address);
+                return false;
+            }
         }
 
         bgSetMode();
@@ -460,7 +448,7 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
     /**
      * Device discovered. This simply passes the discover information to the discovery service for processing.
      */
-    public void deviceDiscovered(BlueGigaBluetoothDevice device) {
+    public void deviceDiscovered(BluetoothDevice device) {
         for (BluetoothDiscoveryListener listener : discoveryListeners) {
             listener.deviceDiscovered(device);
         }
@@ -479,9 +467,9 @@ public class BlueGigaBridgeHandler extends BaseBridgeHandler implements Bluetoot
         command.setStart(1);
         command.setEnd(65535);
         command.setUuid(UUID.fromString("00002800-0000-0000-0000-000000000000"));
-        BlueGigaReadByGroupTypeResponse response = (BlueGigaReadByGroupTypeResponse) bgHandler.sendTransaction(command);
-
-        return response.getResult() == BgApiResponse.SUCCESS;
+        BlueGigaResponse response = bgHandler.sendTransaction(command);
+        return (response instanceof BlueGigaReadByGroupTypeResponse
+                && ((BlueGigaReadByGroupTypeResponse) response).getResult() == BgApiResponse.SUCCESS);
     }
 
     /**

@@ -8,9 +8,9 @@
     http://www.eclipse.org/legal/epl-v10.html
 
 -->
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" configuration-policy="optional" immediate="true" name="binding.dmx.test">
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.2.0" configuration-pid="binding.bluetooth" configuration-policy="optional" immediate="true" name="org.eclipse.smarthome.binding.bluetooth.internal.BluetoothHandlerFactory">
    <service>
       <provide interface="org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory"/>
    </service>
-   <implementation class="org.eclipse.smarthome.binding.dmx.test.DmxTestHandlerFactory"/>
+   <implementation class="org.eclipse.smarthome.binding.bluetooth.internal.BluetoothHandlerFactory"/>
 </scr:component>

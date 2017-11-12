@@ -1,6 +1,5 @@
 /**
- * Copyright (c) 2010-2017 by the respective copyright holders.
- *
+ * Copyright (c) 2014-2017 by the respective copyright holders.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,12 +102,12 @@ public class BluetoothDevice {
     /**
      * Last known RSSI
      */
-    protected int rssi = Integer.MIN_VALUE;
+    protected Integer rssi = null;
 
     /**
      * Last reported transmitter power
      */
-    protected int txPower = Integer.MIN_VALUE;
+    protected Integer txPower = null;
 
     /**
      * The event listeners will be notified of device updates
@@ -198,11 +197,11 @@ public class BluetoothDevice {
     }
 
     /**
-     * Returns the last Transmit Power value or Integer.MIN_VALUE if no transmit power has been received
+     * Returns the last Transmit Power value or null if no transmit power has been received
      *
      * @return the last reported transmitter power value in dBm
      */
-    public int getTxPower() {
+    public Integer getTxPower() {
         return txPower;
     }
 
@@ -220,11 +219,11 @@ public class BluetoothDevice {
     }
 
     /**
-     * Returns the last Receive Signal Strength Indicator (RSSI) value or Integer.MIN_VALUE if no RSSI has been received
+     * Returns the last Receive Signal Strength Indicator (RSSI) value or null if no RSSI has been received
      *
      * @return the last RSSI value in dBm
      */
-    public int getRssi() {
+    public Integer getRssi() {
         return rssi;
     }
 
@@ -460,9 +459,8 @@ public class BluetoothDevice {
                         listener.onCharacteristicUpdate((BluetoothCharacteristic) args[0]);
                         break;
                 }
-
             } catch (Throwable throwable) {
-                logger.error("BLE could not inform the listener '" + listener + "' : " + throwable.getMessage(),
+                logger.error("Bluetooth could not inform the listener '{}': {}", listener, throwable.getMessage(),
                         throwable);
             }
         }
