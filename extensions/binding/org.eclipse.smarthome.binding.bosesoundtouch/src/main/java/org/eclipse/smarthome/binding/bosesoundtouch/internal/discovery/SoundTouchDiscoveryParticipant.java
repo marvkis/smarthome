@@ -27,8 +27,10 @@ import javax.jmdns.ServiceInfo;
 import org.eclipse.smarthome.config.discovery.DiscoveryResult;
 import org.eclipse.smarthome.config.discovery.DiscoveryResultBuilder;
 import org.eclipse.smarthome.config.discovery.mdns.MDNSDiscoveryParticipant;
+import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.ThingUID;
+import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +41,7 @@ import org.slf4j.LoggerFactory;
  * @author Christian Niessner - Initial contribution
  * @author Thomas Traunbauer
  */
+@Component(immediate = true, configurationPid = "discovery.bosesoundtouch")
 public class SoundTouchDiscoveryParticipant implements MDNSDiscoveryParticipant {
 
     private final Logger logger = LoggerFactory.getLogger(SoundTouchDiscoveryParticipant.class);
@@ -72,7 +75,7 @@ public class SoundTouchDiscoveryParticipant implements MDNSDiscoveryParticipant 
 
             properties.put(DEVICE_PARAMETER_HOST, addrs[0].getHostAddress());
             if (getMacAddress(info) != null) {
-                properties.put(DEVICE_PARAMETER_MAC, new String(getMacAddress(info)));
+                properties.put(Thing.PROPERTY_MAC_ADDRESS, new String(getMacAddress(info)));
             }
             return DiscoveryResultBuilder.create(uid).withProperties(properties).withLabel(label).build();
         }
@@ -81,19 +84,17 @@ public class SoundTouchDiscoveryParticipant implements MDNSDiscoveryParticipant 
 
     @Override
     public ThingUID getThingUID(ServiceInfo info) {
-        if (info != null) {
-            logger.trace("ServiceInfo: " + info);
-            ThingTypeUID typeUID = getThingTypeUID(info);
-            if (typeUID != null) {
-                if (info.getType() != null) {
-                    if (info.getType().equals(getServiceType())) {
-                        logger.trace("Discovered a Bose SoundTouch thing with name '{}'", info.getName());
-                        byte[] mac = getMacAddress(info);
-                        if (mac != null) {
-                            return new ThingUID(typeUID, new String(mac));
-                        } else {
-                            return null;
-                        }
+        logger.trace("ServiceInfo: " + info);
+        ThingTypeUID typeUID = getThingTypeUID(info);
+        if (typeUID != null) {
+            if (info.getType() != null) {
+                if (info.getType().equals(getServiceType())) {
+                    logger.trace("Discovered a Bose SoundTouch thing with name '{}'", info.getName());
+                    byte[] mac = getMacAddress(info);
+                    if (mac != null) {
+                        return new ThingUID(typeUID, new String(mac));
+                    } else {
+                        return null;
                     }
                 }
             }
