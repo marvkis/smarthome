@@ -14,6 +14,7 @@ Import-Package:
  com.google.gson.reflect,
  javax.jmdns,
  org.apache.commons.lang,
+ org.eclipse.jdt.annotation;resolution:=optional,
  org.eclipse.jetty.util,
  org.eclipse.jetty.util.component,
  org.eclipse.jetty.websocket.api,
@@ -36,3 +37,4 @@ Service-Component: OSGI-INF/*.xml
 Export-Package: org.eclipse.smarthome.binding.bosesoundtouch,
  org.eclipse.smarthome.binding.bosesoundtouch.handler,
  org.eclipse.smarthome.binding.bosesoundtouch.types
+Automatic-Module-Name: org.eclipse.smarthome.binding.bosesoundtouch
