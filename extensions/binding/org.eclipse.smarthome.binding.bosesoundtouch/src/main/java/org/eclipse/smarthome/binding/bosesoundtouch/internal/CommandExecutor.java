@@ -271,31 +271,6 @@ public class CommandExecutor implements AvailableSources {
     }
 
     /**
-     * Post Preset on the device
-     *
-     * @param command the command is Type of NextPreviousType
-     */
-    public void postPreset(NextPreviousType command) {
-        ContentItem item = null;
-        if (command.equals(NextPreviousType.NEXT)) {
-            try {
-                item = presetContainer.get(currentContentItem.getPresetID() + 1);
-            } catch (NoPresetFoundException e) {
-                logger.warn("{}: No preset found at id: {}", handler.getDeviceName(),
-                        currentContentItem.getPresetID() + 1);
-            }
-        } else if (command.equals(NextPreviousType.PREVIOUS)) {
-            try {
-                item = presetContainer.get(currentContentItem.getPresetID() - 1);
-            } catch (NoPresetFoundException e) {
-                logger.warn("{}: No preset found at id: {}", handler.getDeviceName(),
-                        currentContentItem.getPresetID() - 1);
-            }
-        }
-        postContentItem(item);
-    }
-
-    /**
      * Post RemoteKey on the device
      *
      * @param command the command is Type of RemoteKeyType

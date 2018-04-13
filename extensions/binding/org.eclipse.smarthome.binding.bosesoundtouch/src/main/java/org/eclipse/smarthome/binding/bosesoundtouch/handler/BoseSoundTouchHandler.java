@@ -214,23 +214,6 @@ public class BoseSoundTouchHandler extends BaseThingHandler implements WebSocket
                     logger.warn("{}: Invalid command type: {}: {}", getDeviceName(), command.getClass(), command);
                 }
                 break;
-            case CHANNEL_PRESET_CONTROL:
-                if (command instanceof StringType) {
-                    String cmd = command.toString();
-                    if (cmd.equals("NEXT")) {
-                        command = NextPreviousType.NEXT;
-                    } else if (cmd.equals("PREVIOUS")) {
-                        command = NextPreviousType.PREVIOUS;
-                    }
-                }
-                if (command instanceof NextPreviousType) {
-                    commandExecutor.postPreset((NextPreviousType) command);
-                } else if (command.equals(RefreshType.REFRESH)) {
-                    // TODO RefreshType
-                } else {
-                    logger.warn("{}: Invalid command type: {}: {}", getDeviceName(), command.getClass(), command);
-                }
-                break;
             case CHANNEL_BASS:
                 if (command instanceof DecimalType) {
                     commandExecutor.postBass((DecimalType) command);
@@ -343,7 +326,7 @@ public class BoseSoundTouchHandler extends BaseThingHandler implements WebSocket
      * @return the MAC Address of this device
      */
     public String getMacAddress() {
-        return (String) getThing().getConfiguration().getProperties().get(DEVICE_PARAMETER_MAC);
+        return (String) getThing().getConfiguration().get(Thing.PROPERTY_MAC_ADDRESS);
     }
 
     /**

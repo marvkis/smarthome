@@ -7,44 +7,44 @@
 	<channel-type id="keyCode" advanced="true">
 		<item-type>String</item-type>
 		<label>Remote Key Code</label>
-		<description>Virtually push a remote button</description>
+		<description>Simulates pushing a remote control button</description>
 		<state readOnly="false">
 			<options>
-				<option value="PLAY">PLAY</option>
-				<option value="PAUSE">PAUSE</option>
-				<option value="STOP">STOP</option>
-				<option value="PREV_TRACK">PREV_TRACK</option>
-				<option value="NEXT_TRACK">NEXT_TRACK</option>
-				<option value="THUMBS_UP">THUMBS_UP</option>
-				<option value="THUMBS_DOWN">THUMBS_DOWN</option>
-				<option value="BOOKMARK">BOOKMARK</option>
-				<option value="POWER">POWER</option>
-				<option value="MUTE">MUTE</option>
-				<option value="VOLUME_UP">VOLUME_UP</option>
-				<option value="VOLUME_DOWN">VOLUME_DOWN</option>
-				<option value="PRESET_1">PRESET_1</option>
-				<option value="PRESET_2">PRESET_2</option>
-				<option value="PRESET_3">PRESET_3</option>
-				<option value="PRESET_4">PRESET_4</option>
-				<option value="PRESET_5">PRESET_5</option>
-				<option value="PRESET_6">PRESET_6</option>
-				<option value="AUX_INPUT">AUX_INPUT</option>
-				<option value="SHUFFLE_OFF">SHUFFLE_OFF</option>
-				<option value="SHUFFLE_ON">SHUFFLE_ON</option>
-				<option value="REPEAT_OFF">REPEAT_OFF</option>
-				<option value="REPEAT_ONE">REPEAT_ONE</option>
-				<option value="REPEAT_ALL">REPEAT_ALL</option>
-				<option value="PLAY_PAUSE">PLAY_PAUSE</option>
-				<option value="ADD_FAVORITE">ADD_FAVORITE</option>
-				<option value="REMOVE_FAVORITE">REMOVE_FAVORITE</option>
+				<option value="PLAY">Play</option>
+				<option value="PAUSE">Pause</option>
+				<option value="STOP">Stop</option>
+				<option value="PREV_TRACK">Prev Track</option>
+				<option value="NEXT_TRACK">Next Track</option>
+				<option value="THUMBS_UP">Thumbs Up</option>
+				<option value="THUMBS_DOWN">Thumbs Down</option>
+				<option value="BOOKMARK">Bookmark</option>
+				<option value="POWER">Power</option>
+				<option value="MUTE">Mute</option>
+				<option value="VOLUME_UP">Volume Up</option>
+				<option value="VOLUME_DOWN">Volume Down</option>
+				<option value="PRESET_1">Preset 1</option>
+				<option value="PRESET_2">Preset 2</option>
+				<option value="PRESET_3">Preset 3</option>
+				<option value="PRESET_4">Preset 4</option>
+				<option value="PRESET_5">Preset 5</option>
+				<option value="PRESET_6">Preset 6</option>
+				<option value="AUX_INPUT">AUX Input</option>
+				<option value="SHUFFLE_OFF">Shuffle Off</option>
+				<option value="SHUFFLE_ON">Shuffle On</option>
+				<option value="REPEAT_OFF">Repeat Off</option>
+				<option value="REPEAT_ONE">Repeat One</option>
+				<option value="REPEAT_ALL">Repeat All</option>
+				<option value="PLAY_PAUSE">Play/Pause</option>
+				<option value="ADD_FAVORITE">Add Favorite</option>
+				<option value="REMOVE_FAVORITE">Remove Favorite</option>
 			</options>
 		</state>
 	</channel-type>
 
 	<channel-type id="mute">
 		<item-type>Switch</item-type>
-		<label>Volume Mute</label>
-		<description>Mute state of the Bose SoundTouch</description>
+		<label>Mute</label>
+		<description>Mutes the sound</description>
 	</channel-type>
 
 	<channel-type id="nowPlayingAlbum" advanced="true">
@@ -82,9 +82,9 @@
 		<state readOnly="true" />
 	</channel-type>
 
-	<channel-type id="nowPlayingItemName" advanced="true">
+	<channel-type id="nowPlayingItemName">
 		<item-type>String</item-type>
-		<label>Item Name</label>
+		<label>Now Playing</label>
 		<description>Visible description shown in display</description>
 		<state readOnly="true" />
 	</channel-type>
@@ -113,24 +113,24 @@
 	<channel-type id="operationMode_default">
 		<item-type>String</item-type>
 		<label>Operation Mode</label>
-		<description>Bose SoundTouch current Operation Mode</description>
+		<description>Current Operation Mode</description>
 		<state readOnly="false">
 			<options>
-				<option value="STANDBY">STANDBY</option>
-				<option value="INTERNET_RADIO">INTERNET_RADIO</option>
-				<option value="BLUETOOTH">BLUETOOTH</option>
-				<option value="STORED_MUSIC">STORED_MUSIC</option>
+				<option value="STANDBY">Standby</option>
+				<option value="INTERNET_RADIO">Internet Radio</option>
+				<option value="BLUETOOTH">Bluetooth</option>
+				<option value="STORED_MUSIC">Stored Music</option>
 				<option value="AUX">AUX</option>
 				<option value="AUX1">AUX1</option>
 				<option value="AUX2">AUX2</option>
 				<option value="AUX3">AUX3</option>
 				<option value="TV">TV</option>
 				<option value="HDMI">HDMI</option>
-				<option value="SPOTIFY">SPOTIFY</option>
-				<option value="PANDORA">PANDORA</option>
-				<option value="DEEZER">DEEZER</option>
-				<option value="SIRIUSXM">SIRIUSXM</option>
-				<option value="AMAZON">AMAZON</option>
+				<option value="SPOTIFY">Spotify</option>
+				<option value="PANDORA">Pandora</option>
+				<option value="DEEZER">Deezer</option>
+				<option value="SIRIUSXM">SiriusXM</option>
+				<option value="AMAZON">Amazon</option>
 			</options>
 		</state>
 	</channel-type>
@@ -151,15 +151,7 @@
 	<channel-type id="preset">
 		<item-type>Number</item-type>
 		<label>Preset</label>
-		<description>PresetValue 1-6 Preset of BST, >7 Binding Presets</description>
-		<state readOnly="false" />
-	</channel-type>
-
-	<channel-type id="presetControl" advanced="true">
-		<item-type>Player</item-type>
-		<label>Preset Control</label>
-		<description>Control the Preset, e.g. next/previous</description>
-		<category>Player</category>
+		<description>1-6 Preset of Soundtouch, >7 Binding Presets</description>
 	</channel-type>
 
 	<channel-type id="rateEnabled" advanced="true">
@@ -226,19 +218,19 @@
 	<channel-type id="operationMode_BST_10_20_30">
 		<item-type>String</item-type>
 		<label>Operation Mode</label>
-		<description>Bose SoundTouch current Operation Mode</description>
+		<description>Current Operation Mode</description>
 		<state readOnly="false">
 			<options>
-				<option value="STANDBY">STANDBY</option>
-				<option value="INTERNET_RADIO">INTERNET_RADIO</option>
-				<option value="BLUETOOTH">BLUETOOTH</option>
-				<option value="STORED_MUSIC">STORED_MUSIC</option>
-				<option value="AUX">AUX</option>
-				<option value="SPOTIFY">SPOTIFY</option>
-				<option value="PANDORA">PANDORA</option>
-				<option value="DEEZER">DEEZER</option>
-				<option value="SIRIUSXM">SIRIUSXM</option>
-				<option value="AMAZON">AMAZON</option>
+                <option value="STANDBY">Standby</option>
+                <option value="INTERNET_RADIO">Internet Radio</option>
+                <option value="BLUETOOTH">Bluetooth</option>
+                <option value="STORED_MUSIC">Stored Music</option>
+                <option value="AUX">AUX</option>
+                <option value="SPOTIFY">Spotify</option>
+                <option value="PANDORA">Pandora</option>
+                <option value="DEEZER">Deezer</option>
+                <option value="SIRIUSXM">SiriusXM</option>
+                <option value="AMAZON">Amazon</option>
 			</options>
 		</state>
 	</channel-type>
@@ -247,20 +239,20 @@
 	<channel-type id="operationMode_BST_300">
 		<item-type>String</item-type>
 		<label>Operation Mode</label>
-		<description>Bose SoundTouch current Operation Mode</description>
+		<description>Current Operation Mode</description>
 		<state readOnly="false">
 			<options>
-				<option value="STANDBY">STANDBY</option>
-				<option value="INTERNET_RADIO">INTERNET_RADIO</option>
-				<option value="BLUETOOTH">BLUETOOTH</option>
-				<option value="STORED_MUSIC">STORED_MUSIC</option>
-				<option value="TV">TV</option>
-				<option value="HDMI">HDMI</option>
-				<option value="SPOTIFY">SPOTIFY</option>
-				<option value="PANDORA">PANDORA</option>
-				<option value="DEEZER">DEEZER</option>
-				<option value="SIRIUSXM">SIRIUSXM</option>
-				<option value="AMAZON">AMAZON</option>
+                <option value="STANDBY">Standby</option>
+                <option value="INTERNET_RADIO">Internet Radio</option>
+                <option value="BLUETOOTH">Bluetooth</option>
+                <option value="STORED_MUSIC">Stored Music</option>
+                <option value="TV">TV</option>
+                <option value="HDMI">HDMI</option>
+                <option value="SPOTIFY">Spotify</option>
+                <option value="PANDORA">Pandora</option>
+                <option value="DEEZER">Deezer</option>
+                <option value="SIRIUSXM">SiriusXM</option>
+                <option value="AMAZON">Amazon</option>
 			</options>
 		</state>
 	</channel-type>
@@ -269,19 +261,19 @@
 	<channel-type id="operationMode_BST_WLA">
 		<item-type>String</item-type>
 		<label>Operation Mode</label>
-		<description>Bose SoundTouch current Operation Mode</description>
+		<description>Current Operation Mode</description>
 		<state readOnly="false">
 			<options>
-				<option value="STANDBY">STANDBY</option>
-				<option value="INTERNET_RADIO">INTERNET_RADIO</option>
-				<option value="BLUETOOTH">BLUETOOTH</option>
-				<option value="STORED_MUSIC">STORED_MUSIC</option>
-				<option value="AUX">AUX</option>
-				<option value="SPOTIFY">SPOTIFY</option>
-				<option value="PANDORA">PANDORA</option>
-				<option value="DEEZER">DEEZER</option>
-				<option value="SIRIUSXM">SIRIUSXM</option>
-				<option value="AMAZON">AMAZON</option>
+                <option value="STANDBY">Standby</option>
+                <option value="INTERNET_RADIO">Internet Radio</option>
+                <option value="BLUETOOTH">Bluetooth</option>
+                <option value="STORED_MUSIC">Stored Music</option>
+                <option value="AUX">AUX</option>
+                <option value="SPOTIFY">Spotify</option>
+                <option value="PANDORA">Pandora</option>
+                <option value="DEEZER">Deezer</option>
+                <option value="SIRIUSXM">SiriusXM</option>
+                <option value="AMAZON">Amazon</option>
 			</options>
 		</state>
 	</channel-type>
@@ -293,18 +285,18 @@
 		<description>Bose SoundTouch current Operation Mode</description>
 		<state readOnly="false">
 			<options>
-				<option value="STANDBY">STANDBY</option>
-				<option value="INTERNET_RADIO">INTERNET_RADIO</option>
-				<option value="BLUETOOTH">BLUETOOTH</option>
-				<option value="STORED_MUSIC">STORED_MUSIC</option>
-				<option value="AUX1">AUX1</option>
-				<option value="AUX2">AUX2</option>
-				<option value="AUX3">AUX3</option>
-				<option value="SPOTIFY">SPOTIFY</option>
-				<option value="PANDORA">PANDORA</option>
-				<option value="DEEZER">DEEZER</option>
-				<option value="SIRIUSXM">SIRIUSXM</option>
-				<option value="AMAZON">AMAZON</option>
+                <option value="STANDBY">Standby</option>
+                <option value="INTERNET_RADIO">Internet Radio</option>
+                <option value="BLUETOOTH">Bluetooth</option>
+                <option value="STORED_MUSIC">Stored Music</option>
+                <option value="AUX1">AUX1</option>
+                <option value="AUX2">AUX2</option>
+                <option value="AUX3">AUX3</option>
+                <option value="SPOTIFY">Spotify</option>
+                <option value="PANDORA">Pandora</option>
+                <option value="DEEZER">Deezer</option>
+                <option value="SIRIUSXM">SiriusXM</option>
+                <option value="AMAZON">Amazon</option>
 			</options>
 		</state>
 	</channel-type>

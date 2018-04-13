@@ -12,11 +12,12 @@
  */
 package org.eclipse.smarthome.binding.bosesoundtouch;
 
-import com.google.common.collect.Sets;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
+
+import com.google.common.collect.Sets;
 
 /**
  * The {@link BoseSoundTouchBindinConstantsg} class defines common constants, which are
@@ -58,7 +59,6 @@ public class BoseSoundTouchBindingConstants {
     public static final String CHANNEL_ZONE_ADD = "zoneAdd";
     public static final String CHANNEL_ZONE_REMOVE = "zoneRemove";
     public static final String CHANNEL_PRESET = "preset";
-    public static final String CHANNEL_PRESET_CONTROL = "presetControl";
     public static final String CHANNEL_BASS = "bass";
     public static final String CHANNEL_RATEENABLED = "rateEnabled";
     public static final String CHANNEL_SKIPENABLED = "skipEnabled";
@@ -76,8 +76,7 @@ public class BoseSoundTouchBindingConstants {
     public static final String CHANNEL_NOWPLAYING_TRACK = "nowPlayingTrack";
 
     // Device configuration parameters;
-    public static final String DEVICE_PARAMETER_HOST = "DEVICE_HOST";
-    public static final String DEVICE_PARAMETER_MAC = "DEVICE_MAC";
+    public static final String DEVICE_PARAMETER_HOST = "host";
 
     // Device information parameters;
     public static final String DEVICE_INFO_NAME = "INFO_NAME";

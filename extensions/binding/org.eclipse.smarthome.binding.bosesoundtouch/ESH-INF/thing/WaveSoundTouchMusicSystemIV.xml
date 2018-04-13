@@ -5,7 +5,7 @@
 
 	<thing-type id="waveSoundTouchMusicSystemIV">
 		<label>Bose Wave SoundTouch Music System IV</label>
-		<description>Represents a Bose Wave SoundTouch Music System IV</description>
+		<description>A Bose Wave SoundTouch Music System IV</description>
 
 		<channels>
 			<channel id="power" typeId="power" />
@@ -17,7 +17,6 @@
 			<channel id="zoneAdd" typeId="zoneAdd" />
 			<channel id="zoneRemove" typeId="zoneRemove" />
 			<channel id="preset" typeId="preset" />
-			<channel id="presetControl" typeId="presetControl" />
 			<channel id="saveAsPreset" typeId="saveAsPreset" />
 			<channel id="keyCode" typeId="keyCode" />
 			<channel id="zoneInfo" typeId="zoneInfo" />
@@ -34,17 +33,6 @@
 			<channel id="nowPlayingStationName" typeId="nowPlayingStationName" />
 			<channel id="nowPlayingTrack" typeId="nowPlayingTrack" />
 		</channels>
-		<config-description>
-			<parameter name="DEVICE_HOST" type="text" required="true">
-				<label>Host Address</label>
-				<description>The Host / IP Address used for communication to this device.
-                </description>
-			</parameter>
-			<parameter name="DEVICE_MAC" type="text" required="true">
-				<label>MAC Address</label>
-				<description>The MAC Address used for communication to this device.
-                </description>
-			</parameter>
-		</config-description>
+        <config-description-ref uri="thing-type:bosesoundtouch:config" />
 	</thing-type>
 </thing:thing-descriptions>
