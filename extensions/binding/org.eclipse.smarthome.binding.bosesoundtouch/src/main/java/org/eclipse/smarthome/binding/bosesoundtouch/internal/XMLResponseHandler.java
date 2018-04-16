@@ -26,6 +26,7 @@ import org.eclipse.smarthome.core.library.types.PercentType;
 import org.eclipse.smarthome.core.library.types.PlayPauseType;
 import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.types.State;
+import org.eclipse.smarthome.core.types.UnDefType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -165,15 +166,15 @@ public class XMLResponseHandler extends DefaultHandler {
                         updateSkipPreviousEnabled(OnOffType.OFF);
 
                         // clear all "nowPlaying" details on source change...
-                        updateNowPlayingAlbum(new StringType(""));
-                        updateNowPlayingArtwork(new StringType(""));
-                        updateNowPlayingArtist(new StringType(""));
-                        updateNowPlayingDescription(new StringType(""));
-                        updateNowPlayingGenre(new StringType(""));
-                        updateNowPlayingItemName(new StringType(""));
-                        updateNowPlayingStationLocation(new StringType(""));
-                        updateNowPlayingStationName(new StringType(""));
-                        updateNowPlayingTrack(new StringType(""));
+                        updateNowPlayingAlbum(UnDefType.NULL);
+                        updateNowPlayingArtwork(UnDefType.NULL);
+                        updateNowPlayingArtist(UnDefType.NULL);
+                        updateNowPlayingDescription(UnDefType.NULL);
+                        updateNowPlayingGenre(UnDefType.NULL);
+                        updateNowPlayingItemName(UnDefType.NULL);
+                        updateNowPlayingStationLocation(UnDefType.NULL);
+                        updateNowPlayingStationName(UnDefType.NULL);
+                        updateNowPlayingTrack(UnDefType.NULL);
                     }
                 } else if ("zone".equals(localName)) {
                     listOfZoneMembers = new ArrayList<>();
@@ -597,39 +598,39 @@ public class XMLResponseHandler extends DefaultHandler {
         }
     }
 
-    private void updateNowPlayingAlbum(StringType state) {
+    private void updateNowPlayingAlbum(State state) {
         handler.updateState(handler.getChannelUID(CHANNEL_NOWPLAYING_ALBUM), state);
     }
 
-    private void updateNowPlayingArtwork(StringType state) {
+    private void updateNowPlayingArtwork(State state) {
         handler.updateState(handler.getChannelUID(CHANNEL_NOWPLAYING_ARTWORK), state);
     }
 
-    private void updateNowPlayingArtist(StringType state) {
+    private void updateNowPlayingArtist(State state) {
         handler.updateState(handler.getChannelUID(CHANNEL_NOWPLAYING_ARTIST), state);
     }
 
-    private void updateNowPlayingDescription(StringType state) {
+    private void updateNowPlayingDescription(State state) {
         handler.updateState(handler.getChannelUID(CHANNEL_NOWPLAYING_DESCRIPTION), state);
     }
 
-    private void updateNowPlayingGenre(StringType state) {
+    private void updateNowPlayingGenre(State state) {
         handler.updateState(handler.getChannelUID(CHANNEL_NOWPLAYING_GENRE), state);
     }
 
-    private void updateNowPlayingItemName(StringType state) {
+    private void updateNowPlayingItemName(State state) {
         handler.updateState(handler.getChannelUID(CHANNEL_NOWPLAYING_ITEMNAME), state);
     }
 
-    private void updateNowPlayingStationLocation(StringType state) {
+    private void updateNowPlayingStationLocation(State state) {
         handler.updateState(handler.getChannelUID(CHANNEL_NOWPLAYING_STATIONLOCATION), state);
     }
 
-    private void updateNowPlayingStationName(StringType state) {
+    private void updateNowPlayingStationName(State state) {
         handler.updateState(handler.getChannelUID(CHANNEL_NOWPLAYING_STATIONNAME), state);
     }
 
-    private void updateNowPlayingTrack(StringType state) {
+    private void updateNowPlayingTrack(State state) {
         handler.updateState(handler.getChannelUID(CHANNEL_NOWPLAYING_TRACK), state);
     }
 
