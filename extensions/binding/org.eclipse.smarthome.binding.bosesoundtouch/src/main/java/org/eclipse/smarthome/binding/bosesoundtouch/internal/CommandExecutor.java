@@ -50,7 +50,6 @@ public class CommandExecutor implements AvailableSources {
     private Logger logger = LoggerFactory.getLogger(CommandExecutor.class);
 
     private BoseSoundTouchHandler handler;
-    private PresetContainer presetContainer;
 
     private BoseSoundTouchHandler zoneMaster;
     private List<BoseSoundTouchHandler> listOfZoneMembers;
@@ -81,11 +80,9 @@ public class CommandExecutor implements AvailableSources {
     public void addContentItemToPresetContainer(int id, ContentItem contentItem) {
         contentItem.setPresetID(id);
         try {
-            presetContainer.put(id, contentItem);
+            handler.getPresetContainer().put(id, contentItem);
         } catch (ContentItemNotPresetableException e) {
             logger.debug("{}: ContentItem is not presetable", handler.getDeviceName());
-        } catch (IOException e) {
-            logger.warn("{}: Could not save presets to file", handler.getDeviceName());
         }
     }
 
@@ -135,8 +132,8 @@ public class CommandExecutor implements AvailableSources {
     public void setCurrentContentItem(ContentItem contentItem) {
         if ((contentItem != null) && (contentItem.isValid())) {
             ContentItem psFound = null;
-            if (presetContainer != null) {
-                Collection<ContentItem> listOfPresets = presetContainer.getAllPresets();
+            if (handler.getPresetContainer() != null) {
+                Collection<ContentItem> listOfPresets = handler.getPresetContainer().getAllPresets();
                 for (ContentItem ps : listOfPresets) {
                     if (ps.isPresetable()) {
                         if (ps.getLocation().equals(contentItem.getLocation())) {
@@ -203,7 +200,7 @@ public class CommandExecutor implements AvailableSources {
             postPower(OnOffType.OFF);
         } else {
             try {
-                ContentItemMaker contentItemMaker = new ContentItemMaker(this, presetContainer);
+                ContentItemMaker contentItemMaker = new ContentItemMaker(this, handler.getPresetContainer());
                 ContentItem contentItem = contentItemMaker.getContentItem(command);
                 postContentItem(contentItem);
             } catch (OperationModeNotAvailableException e) {
@@ -263,7 +260,7 @@ public class CommandExecutor implements AvailableSources {
     public void postPreset(DecimalType command) {
         ContentItem item = null;
         try {
-            item = presetContainer.get(command.intValue());
+            item = handler.getPresetContainer().get(command.intValue());
             postContentItem(item);
         } catch (NoPresetFoundException e) {
             logger.warn("{}: No preset found at id: {}", handler.getDeviceName(), command.intValue());
@@ -466,8 +463,6 @@ public class CommandExecutor implements AvailableSources {
         currentContentItem = null;
 
         mapOfAvailableFunctions = new HashMap<>();
-
-        presetContainer = new PresetContainer();
     }
 
     private void postContentItem(ContentItem contentItem) {

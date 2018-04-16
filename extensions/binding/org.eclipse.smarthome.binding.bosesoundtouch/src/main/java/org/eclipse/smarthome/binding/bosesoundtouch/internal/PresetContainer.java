@@ -12,14 +12,6 @@
  */
 package org.eclipse.smarthome.binding.bosesoundtouch.internal;
 
-import static org.eclipse.smarthome.binding.bosesoundtouch.BoseSoundTouchBindingConstants.BINDING_ID;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,45 +20,34 @@ import java.util.List;
 
 import org.eclipse.smarthome.binding.bosesoundtouch.internal.exceptions.ContentItemNotPresetableException;
 import org.eclipse.smarthome.binding.bosesoundtouch.internal.exceptions.NoPresetFoundException;
-import org.eclipse.smarthome.config.core.ConfigConstants;
+import org.eclipse.smarthome.core.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 
 /**
  * The {@link PresetContainer} class manages a PresetContainer which contains all additional Presets
  *
  * @author Thomas Traunbauer - Initial contribution
+ * @author Kai Kreuzer - Refactored it to use storage instead of file
  */
 public class PresetContainer {
 
     private final Logger logger = LoggerFactory.getLogger(PresetContainer.class);
 
     private HashMap<Integer, ContentItem> mapOfPresets;
-    private File presetFile;
+    private Storage<ContentItem> storage;
 
     /**
      * Creates a new instance of this class
      */
-    public PresetContainer() {
+    public PresetContainer(Storage<ContentItem> storage) {
+        this.storage = storage;
         init();
     }
 
     private void init() {
         this.mapOfPresets = new HashMap<Integer, ContentItem>();
-        File folder = new File(ConfigConstants.getUserDataFolder() + "/" + BINDING_ID);
-        if (!folder.exists()) {
-            logger.debug("Creating directory {}", folder.getPath());
-            folder.mkdirs();
-        }
-        presetFile = new File(folder, "presets.json");
-        try {
-            readFromFile();
-        } catch (IOException e) {
-            logger.debug("Could not load Presets from File: {}", presetFile.getPath());
-        }
+        readFromStorage();
     }
 
     /**
@@ -86,13 +67,12 @@ public class PresetContainer {
      * @param preset
      *
      * @throws ContentItemNotPresetableException if ContentItem is not presetable
-     * @throws IOException if Presets could not be saved to file
      */
-    public void put(int presetID, ContentItem preset) throws ContentItemNotPresetableException, IOException {
+    public void put(int presetID, ContentItem preset) throws ContentItemNotPresetableException {
         preset.setPresetID(presetID);
         if (preset.isPresetable()) {
             mapOfPresets.put(presetID, preset);
-            writeToFile();
+            writeToStorage();
         } else {
             throw new ContentItemNotPresetableException();
         }
@@ -114,49 +94,29 @@ public class PresetContainer {
         }
     }
 
-    private void writeToFile() throws IOException {
-        if (presetFile != null) {
-            Collection<ContentItem> colletionOfPresets = getAllPresets();
-            List<ContentItem> listOfPresets = new ArrayList<>();
-            listOfPresets.addAll(colletionOfPresets);
-            // Only openhab Presets get saved
-            for (Iterator<ContentItem> cii = listOfPresets.iterator(); cii.hasNext();) {
-                if (cii.next().getPresetID() <= 6) {
-                    cii.remove();
-                }
+    private void writeToStorage() {
+        Collection<ContentItem> colletionOfPresets = getAllPresets();
+        List<ContentItem> listOfPresets = new ArrayList<>();
+        listOfPresets.addAll(colletionOfPresets);
+        // Only binding presets get saved
+        for (Iterator<ContentItem> cii = listOfPresets.iterator(); cii.hasNext();) {
+            if (cii.next().getPresetID() <= 6) {
+                cii.remove();
             }
+        }
 
-            if (listOfPresets.size() > 0) {
-                if (presetFile.exists()) {
-                    presetFile.delete();
-                }
-
-                BufferedWriter writer = new BufferedWriter(new FileWriter(presetFile));
-                new GsonBuilder().create().toJson(listOfPresets, writer);
-                writer.close();
-            }
+        if (listOfPresets.size() > 0) {
+            listOfPresets.forEach(item -> storage.put(String.valueOf(item.getPresetID()), item));
         }
     }
 
-    private void readFromFile() throws IOException {
-        if (presetFile != null) {
-            if (!presetFile.exists()) {
-                throw new IOException("Could not load save PRESETS");
-            }
-            if (presetFile.exists()) {
-                BufferedReader reader = new BufferedReader(new FileReader(presetFile));
-                Collection<ContentItem> items = new GsonBuilder().create().fromJson(reader,
-                        new TypeToken<Collection<ContentItem>>() {
-                        }.getType());
-                reader.close();
-                if (items != null) {
-                    for (ContentItem item : items) {
-                        try {
-                            put(item.getPresetID(), item);
-                        } catch (ContentItemNotPresetableException e) {
-                        }
-                    }
-                }
+    private void readFromStorage() {
+        Collection<ContentItem> items = storage.getValues();
+        for (ContentItem item : items) {
+            try {
+                put(item.getPresetID(), item);
+            } catch (ContentItemNotPresetableException e) {
+                logger.debug("Item '{}' is not presetable - ignoring it.", item.getItemName());
             }
         }
     }

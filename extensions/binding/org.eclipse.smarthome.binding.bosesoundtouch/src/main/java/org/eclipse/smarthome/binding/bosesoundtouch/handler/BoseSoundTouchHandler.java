@@ -28,6 +28,7 @@ import org.eclipse.jetty.websocket.client.ClientUpgradeRequest;
 import org.eclipse.jetty.websocket.client.WebSocketClient;
 import org.eclipse.smarthome.binding.bosesoundtouch.internal.BoseSoundTouchHandlerFactory;
 import org.eclipse.smarthome.binding.bosesoundtouch.internal.CommandExecutor;
+import org.eclipse.smarthome.binding.bosesoundtouch.internal.PresetContainer;
 import org.eclipse.smarthome.binding.bosesoundtouch.internal.XMLResponseProcessor;
 import org.eclipse.smarthome.binding.bosesoundtouch.types.OperationModeType;
 import org.eclipse.smarthome.binding.bosesoundtouch.types.RemoteKeyType;
@@ -69,6 +70,8 @@ public class BoseSoundTouchHandler extends BaseThingHandler implements WebSocket
     private BoseSoundTouchHandlerFactory factory;
     private CommandExecutor commandExecutor;
 
+    private PresetContainer presetContainer;
+
     /**
      * Creates a new instance of this class for the {@link Thing}.
      *
@@ -77,12 +80,13 @@ public class BoseSoundTouchHandler extends BaseThingHandler implements WebSocket
      *
      * @throws IllegalArgumentException if thing or factory argument is null
      */
-    public BoseSoundTouchHandler(Thing thing, BoseSoundTouchHandlerFactory factory) {
+    public BoseSoundTouchHandler(Thing thing, BoseSoundTouchHandlerFactory factory, PresetContainer presetContainer) {
         super(thing);
         if (factory == null) {
             throw new IllegalArgumentException("The argument 'factory' must not be null.");
         }
         this.factory = factory;
+        this.presetContainer = presetContainer;
         xmlResponseProcessor = new XMLResponseProcessor(this);
     }
 
@@ -365,6 +369,10 @@ public class BoseSoundTouchHandler extends BaseThingHandler implements WebSocket
      */
     public ScheduledExecutorService getScheduler() {
         return scheduler;
+    }
+
+    public PresetContainer getPresetContainer() {
+        return this.presetContainer;
     }
 
     @Override

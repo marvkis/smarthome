@@ -19,12 +19,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.smarthome.binding.bosesoundtouch.handler.BoseSoundTouchHandler;
+import org.eclipse.smarthome.core.storage.Storage;
+import org.eclipse.smarthome.core.storage.StorageService;
 import org.eclipse.smarthome.core.thing.Thing;
 import org.eclipse.smarthome.core.thing.ThingTypeUID;
 import org.eclipse.smarthome.core.thing.binding.BaseThingHandlerFactory;
 import org.eclipse.smarthome.core.thing.binding.ThingHandler;
 import org.eclipse.smarthome.core.thing.binding.ThingHandlerFactory;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * The {@link BoseSoundTouchHandlerFactory} is responsible for creating things and thing
@@ -36,6 +39,7 @@ import org.osgi.service.component.annotations.Component;
 public class BoseSoundTouchHandlerFactory extends BaseThingHandlerFactory {
 
     private Map<String, BoseSoundTouchHandler> mapOfBoseSoundTouchHandler = new HashMap<>();
+    private StorageService storageService;
 
     @Override
     public boolean supportsThingType(ThingTypeUID thingTypeUID) {
@@ -44,9 +48,20 @@ public class BoseSoundTouchHandlerFactory extends BaseThingHandlerFactory {
 
     @Override
     protected ThingHandler createHandler(Thing thing) {
-        BoseSoundTouchHandler handler = new BoseSoundTouchHandler(thing, this);
+        Storage<ContentItem> storage = storageService.getStorage(thing.getUID().toString(),
+                ContentItem.class.getClassLoader());
+        BoseSoundTouchHandler handler = new BoseSoundTouchHandler(thing, this, new PresetContainer(storage));
         registerSoundTouchDevice(handler);
         return handler;
+    }
+
+    @Reference
+    protected void setStorageService(StorageService storageService) {
+        this.storageService = storageService;
+    }
+
+    protected void unsetStorageService(StorageService storageService) {
+        this.storageService = null;
     }
 
     /**
