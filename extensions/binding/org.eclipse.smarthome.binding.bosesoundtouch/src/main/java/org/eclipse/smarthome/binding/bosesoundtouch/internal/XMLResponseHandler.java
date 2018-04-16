@@ -24,9 +24,11 @@ import org.eclipse.smarthome.core.library.types.DecimalType;
 import org.eclipse.smarthome.core.library.types.OnOffType;
 import org.eclipse.smarthome.core.library.types.PercentType;
 import org.eclipse.smarthome.core.library.types.PlayPauseType;
+import org.eclipse.smarthome.core.library.types.RawType;
 import org.eclipse.smarthome.core.library.types.StringType;
 import org.eclipse.smarthome.core.types.State;
 import org.eclipse.smarthome.core.types.UnDefType;
+import org.eclipse.smarthome.io.net.http.HttpUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.Attributes;
@@ -497,7 +499,12 @@ public class XMLResponseHandler extends DefaultHandler {
                 updateNowPlayingAlbum(new StringType(new String(ch, start, length)));
                 break;
             case NowPlayingArt:
-                updateNowPlayingArtwork(new StringType(new String(ch, start, length)));
+                String url = new String(ch, start, length);
+                // We download the cover art in a different thread to not delay the other operations
+                handler.getScheduler().submit(() -> {
+                    RawType image = HttpUtil.downloadImage(url, true, 500000);
+                    updateNowPlayingArtwork(image);
+                });
                 break;
             case NowPlayingArtist:
                 updateNowPlayingArtist(new StringType(new String(ch, start, length)));

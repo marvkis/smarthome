@@ -45,7 +45,7 @@ Switch  Bose1_SkipEnabled                "Skip: [%s]"           <switch>      { 
 Switch  Bose1_SkipPreviousEnabled        "SkipPrevious: [%s]"   <switch>      { channel="bosesoundtouch:device:BOSEMACADDR:skipPreviousEnabled" }
 String  Bose1_nowPlayingAlbum            "Album: [%s]"          <text>        { channel="bosesoundtouch:device:BOSEMACADDR:nowPlayingAlbum" }
 String  Bose1_nowPlayingArtist           "Artist: [%s]"         <text>        { channel="bosesoundtouch:device:BOSEMACADDR:nowPlayingArtist" }
-String  Bose1_nowPlayingArtwork          "Art: [%s]"            <text>        { channel="bosesoundtouch:device:BOSEMACADDR:nowPlayingArtwork" }
+Image  Bose1_nowPlayingArtwork           "Artwork"              <text>        { channel="bosesoundtouch:device:BOSEMACADDR:nowPlayingArtwork" }
 String  Bose1_nowPlayingDescription      "Description: [%s]"    <text>        { channel="bosesoundtouch:device:BOSEMACADDR:nowPlayingDescription" }
 String  Bose1_nowPlayingGenre            "Genre: [%s]"          <text>        { channel="bosesoundtouch:device:BOSEMACADDR:nowPlayingGenre" }
 String  Bose1_nowPlayingItemName         "Playing: [%s]"        <text>        { channel="bosesoundtouch:device:BOSEMACADDR:nowPlayingItemName" }

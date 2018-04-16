@@ -17,6 +17,7 @@ import static org.eclipse.smarthome.binding.bosesoundtouch.BoseSoundTouchBinding
 import java.io.IOException;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -355,6 +356,15 @@ public class BoseSoundTouchHandler extends BaseThingHandler implements WebSocket
             chann = getThing().getChannel(channelId);
         }
         return chann.getUID();
+    }
+
+    /**
+     * Provides the handler internal scheduler instance
+     *
+     * @return the {@link ScheduledExecutorService} instance used by this handler
+     */
+    public ScheduledExecutorService getScheduler() {
+        return scheduler;
     }
 
     @Override
