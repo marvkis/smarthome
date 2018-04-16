@@ -36,7 +36,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * The {@link XMLResponseHandler} class handles the XML communication with the Soundtouch
  *
  * @author Christian Niessner - Initial contribution
- * @author Thomas Traunbauer
+ * @author Thomas Traunbauer - Initial contribution
  */
 public class XMLResponseHandler extends DefaultHandler {
 

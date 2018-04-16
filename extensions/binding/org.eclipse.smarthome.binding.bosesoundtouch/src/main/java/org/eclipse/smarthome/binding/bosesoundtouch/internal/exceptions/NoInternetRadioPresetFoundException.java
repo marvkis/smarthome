@@ -15,7 +15,7 @@ package org.eclipse.smarthome.binding.bosesoundtouch.internal.exceptions;
 /**
  * The {@link NoInternetRadioPresetFoundException} class is an exception
  *
- * @author Thomas Traunbauer
+ * @author Thomas Traunbauer - Initial contribution
  */
 public class NoInternetRadioPresetFoundException extends NoPresetFoundException {
     private static final long serialVersionUID = 1L;

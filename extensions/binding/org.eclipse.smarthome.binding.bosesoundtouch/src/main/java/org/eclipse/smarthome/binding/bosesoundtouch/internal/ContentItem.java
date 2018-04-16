@@ -12,18 +12,19 @@
  */
 package org.eclipse.smarthome.binding.bosesoundtouch.internal;
 
-import com.google.gson.annotations.Expose;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.eclipse.smarthome.binding.bosesoundtouch.types.OperationModeType;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * The {@link ContentItem} class manages a ContentItem
  *
  * @author Christian Niessner - Initial contribution
- * @author Thomas Traunbauer
+ * @author Thomas Traunbauer - Initial contribution
  */
 public class ContentItem {
 

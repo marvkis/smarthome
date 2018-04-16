@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * results of searches for mDNS services of type _soundtouch._tcp.local.
  *
  * @author Christian Niessner - Initial contribution
- * @author Thomas Traunbauer
+ * @author Thomas Traunbauer - Initial contribution
  */
 @Component(immediate = true, configurationPid = "discovery.bosesoundtouch")
 public class SoundTouchDiscoveryParticipant implements MDNSDiscoveryParticipant {

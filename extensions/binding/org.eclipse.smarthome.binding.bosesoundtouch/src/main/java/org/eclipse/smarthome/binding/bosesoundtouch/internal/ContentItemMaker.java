@@ -22,7 +22,7 @@ import org.eclipse.smarthome.binding.bosesoundtouch.types.OperationModeType;
 /**
  * The {@link ContentItemMaker} class makes ContentItems for sources
  *
- * @author Thomas Traunbauer
+ * @author Thomas Traunbauer - Initial contribution
  */
 public class ContentItemMaker {
 

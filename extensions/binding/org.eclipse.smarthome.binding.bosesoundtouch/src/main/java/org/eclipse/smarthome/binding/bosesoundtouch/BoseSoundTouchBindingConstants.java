@@ -24,7 +24,7 @@ import com.google.common.collect.Sets;
  * used across the whole binding.
  *
  * @author Christian Niessner - Initial contribution
- * @author Thomas Traunbauer
+ * @author Thomas Traunbauer - Initial contribution
  */
 public class BoseSoundTouchBindingConstants {
 

@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The {@link CommandExecutor} class executes commands on the websocket
  *
- * @author Thomas Traunbauer
+ * @author Thomas Traunbauer - Initial contribution
  */
 public class CommandExecutor implements AvailableSources {
     private Logger logger = LoggerFactory.getLogger(CommandExecutor.class);

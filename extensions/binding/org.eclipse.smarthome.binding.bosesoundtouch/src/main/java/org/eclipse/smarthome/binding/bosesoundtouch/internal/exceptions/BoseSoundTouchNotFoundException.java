@@ -15,7 +15,7 @@ package org.eclipse.smarthome.binding.bosesoundtouch.internal.exceptions;
 /**
  * The {@link BoseSoundTouchNotFoundException} class is an exception
  *
- * @author Thomas Traunbauer
+ * @author Thomas Traunbauer - Initial contribution
  */
 public class BoseSoundTouchNotFoundException extends Exception {
     private static final long serialVersionUID = 1L;

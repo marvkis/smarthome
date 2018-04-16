@@ -16,7 +16,7 @@ package org.eclipse.smarthome.binding.bosesoundtouch.internal;
  * The {@link XMLHandlerState} class defines the XML States provided from Bose Soundtouch
  *
  * @author Christian Niessner - Initial contribution
- * @author Thomas Traunbauer
+ * @author Thomas Traunbauer - Initial contribution
  */
 public enum XMLHandlerState {
     INIT,

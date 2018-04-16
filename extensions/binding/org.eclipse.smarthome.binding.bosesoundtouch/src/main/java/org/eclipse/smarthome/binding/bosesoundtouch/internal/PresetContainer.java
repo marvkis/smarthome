@@ -38,7 +38,7 @@ import com.google.gson.reflect.TypeToken;
 /**
  * The {@link PresetContainer} class manages a PresetContainer which contains all additional Presets
  *
- * @author Thomas Traunbauer
+ * @author Thomas Traunbauer - Initial contribution
  */
 public class PresetContainer {
 

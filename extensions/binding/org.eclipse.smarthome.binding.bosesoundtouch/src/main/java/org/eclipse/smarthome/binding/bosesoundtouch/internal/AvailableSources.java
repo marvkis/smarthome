@@ -15,7 +15,7 @@ package org.eclipse.smarthome.binding.bosesoundtouch.internal;
 /**
  * The {@link AvailableSources} is used to find out, which sources and functions are available
  *
- * @author Thomas Traunbauer
+ * @author Thomas Traunbauer - Initial contribution
  */
 public interface AvailableSources {
 

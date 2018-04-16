@@ -20,7 +20,7 @@ import org.eclipse.smarthome.core.types.State;
  * The {@link OperationModeType} class is holding all OperationModes
  *
  * @author Christian Niessner - Initial contribution
- * @author Thomas Traunbauer
+ * @author Thomas Traunbauer - Initial contribution
  */
 public enum OperationModeType implements PrimitiveType, State, Command {
     OFFLINE,

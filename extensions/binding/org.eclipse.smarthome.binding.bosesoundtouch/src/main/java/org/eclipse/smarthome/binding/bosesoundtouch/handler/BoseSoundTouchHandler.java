@@ -54,7 +54,7 @@ import org.slf4j.LoggerFactory;
  * sent to one of the channels.
  *
  * @author Christian Niessner - Initial contribution
- * @author Thomas Traunbauer
+ * @author Thomas Traunbauer - Initial contribution
  */
 public class BoseSoundTouchHandler extends BaseThingHandler implements WebSocketListener {
 

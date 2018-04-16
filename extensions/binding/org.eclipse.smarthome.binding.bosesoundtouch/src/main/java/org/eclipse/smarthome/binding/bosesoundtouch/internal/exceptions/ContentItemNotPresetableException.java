@@ -15,7 +15,7 @@ package org.eclipse.smarthome.binding.bosesoundtouch.internal.exceptions;
 /**
  * The {@link ContentItemNotPresetableException} class is an exception
  *
- * @author Thomas Traunbauer
+ * @author Thomas Traunbauer - Initial contribution
  */
 public class ContentItemNotPresetableException extends NoPresetFoundException {
     private static final long serialVersionUID = 1L;

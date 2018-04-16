@@ -27,7 +27,7 @@ import org.xml.sax.helpers.XMLReaderFactory;
  * The {@link XMLResponseProcessor} class handles the XML mapping
  *
  * @author Christian Niessner - Initial contribution
- * @author Thomas Traunbauer
+ * @author Thomas Traunbauer - Initial contribution
  */
 public class XMLResponseProcessor {
     private BoseSoundTouchHandler handler;

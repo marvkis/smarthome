@@ -15,7 +15,7 @@ package org.eclipse.smarthome.binding.bosesoundtouch.internal;
 /**
  * The {@link APIRequest} class handles the API requests
  *
- * @author Thomas Traunbauer
+ * @author Thomas Traunbauer - Initial contribution
  */
 public enum APIRequest {
     KEY("key"),
